@@ -13,16 +13,16 @@ from api.models import LOGGINGSerializer
 
 class DataCache:
     
-    def __init__(self, request,query=None):
-        self.request = request
-        self.query= query
+    def __init__(self, coin_symbol, investment):
+        self.coin_symbol = str(coin_symbol)
+        self.investment = int(investment)
 
 
     #Check if there exists a freshly cached result for the current query
     def check_if_valid_final_result_exists(self):
 
 
-        existing_result_raw = Results.objects.get(SYMBOL={self.coin_symbol},INVESTMENT={self.investment}) if Results.objects.filter(SYMBOL={self.coin_symbol},INVESTMENT={self.investment}).exists() else ''
+        existing_result_raw = Results.objects.get(SYMBOL=self.coin_symbol,INVESTMENT=self.investment) if Results.objects.filter(SYMBOL=self.coin_symbol,INVESTMENT=self.investment).exists() else ''
 
 
 
@@ -40,7 +40,7 @@ class DataCache:
     #Get cached result for the current query
     def get_valid_final_result(self):
 
-        existing_result_raw = Results.objects.get(SYMBOL={self.coin_symbol},INVESTMENT={self.investment}) if Results.objects.filter(SYMBOL={self.coin_symbol},INVESTMENT={self.investment}).exists() else ''
+        existing_result_raw = Results.objects.get(SYMBOL=self.coin_symbol,INVESTMENT=self.investment) if Results.objects.filter(SYMBOL=self.coin_symbol,INVESTMENT=self.investment).exists() else ''
 
         if(existing_result_raw != ''):
 
@@ -54,7 +54,7 @@ class DataCache:
     #Check if we have already stored a cached version of the opening price data for the symbol
     def check_if_historical_cache_exists(self):
 
-        existing_result_raw = OPENING_AVERAGE.objects.get(SYMBOL={self.coin_symbol}) if OPENING_AVERAGE.objects.filter(SYMBOL={self.coin_symbol}).exists() else ''
+        existing_result_raw = OPENING_AVERAGE.objects.get(SYMBOL=self.coin_symbol) if OPENING_AVERAGE.objects.filter(SYMBOL=self.coin_symbol).exists() else ''
 
 
         query = f"SELECT * from OPENING_AVERAGE WHERE SYMBOL = '{self.coin_symbol}'"
@@ -69,7 +69,7 @@ class DataCache:
     #Get cached version of the opening price data for the symbol
     def get_historical_cache(self):
 
-        existing_result_raw = OPENING_AVERAGE.objects.get(SYMBOL={self.coin_symbol}) if OPENING_AVERAGE.objects.filter(SYMBOL={self.coin_symbol}).exists() else ''
+        existing_result_raw = OPENING_AVERAGE.objects.get(SYMBOL=self.coin_symbol) if OPENING_AVERAGE.objects.filter(SYMBOL=self.coin_symbol).exists() else ''
 
         query = f"SELECT * from OPENING_AVERAGE WHERE SYMBOL = '{self.coin_symbol}'"
 

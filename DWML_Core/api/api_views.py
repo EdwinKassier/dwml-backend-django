@@ -13,6 +13,8 @@ from api.models import LOGGING
 from api.models import LOGGINGSerializer
 import logging
 
+import json
+
 from .utils.DataCollector import DataCollector
 
 # Create views here
@@ -173,17 +175,24 @@ def log_detail(request,symbol=None):
 
 @csrf_exempt
 @api_view(["GET"])
-def log_list(request):
+def process_request(request):
     """
     Handle an incoming request from the frontend
     """
     try:
-        symbol = request.GET['symbol']
-        investment = int(request.args.get('investment'))
+        symbol = str(request.GET.get('symbol', None))
+        investment = str(request.GET.get('investment', None))
+
+        print(f'Query for {symbol} and {investment}')
+
+        print(type(investment))
 
         dataCollector = DataCollector(symbol,investment)
         result = dataCollector.driver_logic()
 
-        return JsonResponse(status=200)
-    except:
-        return JsonResponse(status=500)
+        print(result)
+
+        return JsonResponse({'message':'success'},status=200)
+    except Exception as e:
+        print(e)
+        return JsonResponse({'message':'failure'},status=400)

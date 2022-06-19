@@ -18,7 +18,7 @@ class DataCollector:
     
     def __init__(self, coin_symbol, investment):
         self.coin_symbol = coin_symbol
-        self.investment = investment
+        self.investment = int(investment)
 
     #Having been given a raw response from the api request, convert this into a pd dataframe
     def convert_result_to_pd(self,raw):
@@ -61,20 +61,27 @@ class DataCollector:
 
     #Check if we can get data about the given symbol on our target exchange
     def check_symbol_exists_on_exchange(self):
+
+        print(f'Checking symbol {self.coin_symbol} exists')
         check_symbol = (requests.get(f'https://api.cryptowat.ch/markets/kraken/{self.coin_symbol}usd/price')).json()
 
         if "error" in check_symbol and check_symbol["error"]=='Instrument not found':
+            print(f'Symbol {self.coin_symbol} does not exist')
             return False
         else:
+            print(f'Symbol {self.coin_symbol} exists')
             return True
 
 
     def driver_logic(self):
 
+        print(self.investment)
+        print(type(self.investment))
+
         dataCache = DataCache(self.coin_symbol,self.investment)
 
         #Irrelevant of what the user gave, we insert the query into the logging table
-        dataCache.insert_into_logging()
+        #dataCache.insert_into_logging()
 
         if(self.check_symbol_exists_on_exchange()==False):
             return "Symbol doesn\'t exist"
