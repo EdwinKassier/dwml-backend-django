@@ -31,6 +31,7 @@ class DataCache:
             serializer = ResultsSerializer(existing_result_raw, many=False)
 
             print(serializer)
+            return True
 
 
         else:
@@ -46,7 +47,8 @@ class DataCache:
 
             serializer = ResultsSerializer(existing_result_raw, many=False)
 
-            print(serializer)
+            print(serializer.data)
+            return(serializer.data)
         else:
             #There doesn\'t exist a valid historical query
             return({})
@@ -76,7 +78,8 @@ class DataCache:
         if(existing_result_raw != ''):
             serializer = OPENING_AVERAGESerializer(existing_result_raw, many=False)
             
-            print(serializer)
+            print(serializer.data)
+            return(serializer.data)
         else:
             return {}
 

@@ -13,6 +13,8 @@ from api.models import LOGGING
 from api.models import LOGGINGSerializer
 import logging
 
+import traceback
+
 import json
 
 from .utils.DataCollector import DataCollector
@@ -180,6 +182,9 @@ def process_request(request):
     Handle an incoming request from the frontend
     """
     try:
+
+        print(f'Request received {request}')
+
         symbol = str(request.GET.get('symbol', None))
         investment = str(request.GET.get('investment', None))
 
@@ -190,9 +195,9 @@ def process_request(request):
         dataCollector = DataCollector(symbol,investment)
         result = dataCollector.driver_logic()
 
-        print(result)
+        print(f'We have received the result {result}')
 
-        return JsonResponse({'message':'success'},status=200)
+        return JsonResponse({'message':result},status=200)
     except Exception as e:
-        print(e)
+        print(traceback.format_exc())
         return JsonResponse({'message':'failure'},status=400)

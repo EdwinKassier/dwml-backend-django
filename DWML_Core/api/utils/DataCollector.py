@@ -105,6 +105,8 @@ class DataCollector:
 
                 cached_historical_opening_data = dataCache.get_historical_cache()
 
+                print(f'Received cache: {cached_historical_opening_data}')
+
                 average_start_price = cached_historical_opening_data['AVERAGE']
 
             else:
@@ -149,7 +151,7 @@ class DataCollector:
             print(df_end)
             print(average_end_price)
 
-            print(final_result)
+            print(f'Final result to be returned to user {final_result}')
 
 
 
