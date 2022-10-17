@@ -9,6 +9,7 @@ COPY . ./
 # install dependencies
 RUN pip install --upgrade pip 
 RUN pip install -r requirements.txt
+RUN pip install django-cors-headers
 
 EXPOSE 8080
 
