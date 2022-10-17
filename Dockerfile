@@ -6,12 +6,12 @@ ENV APP_HOME /app
 WORKDIR $APP_HOME
 COPY . ./
 
-WORKDIR $APP_HOME/DWML_Core
-
 # install dependencies
 RUN pip install --upgrade pip 
 RUN pip install -r requirements.txt
 
 EXPOSE 8080
+
+WORKDIR $APP_HOME/DWML_Core
 
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8080"]
