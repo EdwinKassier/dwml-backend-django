@@ -18,7 +18,8 @@ import traceback
 import json
 
 from .utils.DataCollector import DataCollector
-from .utils.GraphCreator import GraphCreator
+from .utils.graph_creator import GraphCreator
+
 
 # Create views here
 
@@ -196,10 +197,10 @@ def process_request(request):
 
         print(type(investment))
 
-        dataCollector = DataCollector(symbol,investment)
-        graphCreator = GraphCreator(symbol)
-        graph_data = graphCreator.driver_logic() 
-        result = dataCollector.driver_logic()
+        collector = DataCollector(symbol, investment)
+        creator = GraphCreator(symbol)
+        result = collector.driver_logic()
+        graph_data = creator.driver_logic()
 
         print(f'We have received the result {result}')
 
