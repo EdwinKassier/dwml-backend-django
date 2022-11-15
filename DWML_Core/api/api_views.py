@@ -189,6 +189,9 @@ def process_request(request):
         symbol = str(request.GET.get('symbol', None))
         investment = str(request.GET.get('investment', None))
 
+        if(symbol is None or investment is None):
+            return JsonResponse({'message':'failure'},status=400)
+
         print(f'Query for {symbol} and {investment}')
 
         print(type(investment))
