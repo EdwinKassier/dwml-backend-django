@@ -16,7 +16,6 @@ env:
 jobs:
     test:
         name: Testing
-        needs: lint
         runs-on: ubuntu-latest
         
         steps:
@@ -35,6 +34,7 @@ jobs:
             run: pytest -s
     setup-build-deploy:
         name: Setup, Build, and Deploy
+        needs: test
         runs-on: ubuntu-latest
         
         steps:
