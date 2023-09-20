@@ -17,7 +17,7 @@ import traceback
 
 import json
 
-from .utils.DataCollector import DataCollector
+from .utils.data_collector import DataCollector
 from .utils.graph_creator import GraphCreator
 
 
