@@ -16,7 +16,7 @@ def test_base_route_with_args_invalid_symbol():
 
     assert response.status_code == 200
     assert response.json() == {
-        'message': "Symbol doesn't exist", 'graph_data': "Symbol doesn't exist"}
+        'message': None, 'graph_data': None}
 
 @pytest.mark.django_db
 def test_base_route_malformed_no_symbol():
@@ -24,7 +24,7 @@ def test_base_route_malformed_no_symbol():
     response = client.get('/api/v1/process_request/?investment=1000')
 
     assert response.json() == {
-        'message': "Symbol doesn't exist", 'graph_data': "Symbol doesn't exist"}
+        'message': None, 'graph_data': None}
 
     assert response.status_code == 200
 
@@ -33,7 +33,7 @@ def test_base_route_malformed_no_investment():
     """Test base route with missing investment"""
     response = client.get('/api/v1/process_request/?symbol=ETH')
 
-    assert response.status_code == 200
+    assert response.status_code == 400
 
 @pytest.mark.django_db
 def test_unknown_route():
