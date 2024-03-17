@@ -13,6 +13,6 @@ RUN pip install django-cors-headers
 
 EXPOSE 8080
 
-WORKDIR $APP_HOME/DWML_Core
+WORKDIR $APP_HOME/Core
 
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8080"]

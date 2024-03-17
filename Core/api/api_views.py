@@ -19,6 +19,7 @@ import json
 
 from .utils.data_collector import DataCollector
 from .utils.graph_creator import GraphCreator
+from .utils.covid_scraper import CovidScraper
 
 
 # Create views here
@@ -205,6 +206,24 @@ def process_request(request):
         print(f'We have received the result {result}')
 
         return JsonResponse({'message':result,"graph_data":graph_data},status=200)
+    except Exception as e:
+        print(traceback.format_exc())
+        return JsonResponse({'message':'failure'},status=400)
+    
+@csrf_exempt
+@api_view(["GET"])
+def covid_prediction(request):
+    """
+    Handle an incoming request from the frontend
+    """
+    try:
+
+        print(f'Request received {request}')
+
+        scraper = CovidScraper("south-africa", "2023-03-06", True)
+        result = scraper.driver_logic()
+
+        return JsonResponse({'message':"success","graph_data":result},status=200)
     except Exception as e:
         print(traceback.format_exc())
         return JsonResponse({'message':'failure'},status=400)
