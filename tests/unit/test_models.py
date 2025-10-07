@@ -66,8 +66,10 @@ class TestPortfolioLogModel:
         """Test creating a PortfolioLog instance."""
         log = PortfolioLog.objects.create(
             symbol="ETH",
-            investment=1000.0
+            message="Portfolio calculation completed",
+            level="INFO"
         )
         assert log.symbol == "ETH"
-        assert log.investment == 1000.0
+        assert log.message == "Portfolio calculation completed"
+        assert log.level == "INFO"
         assert log.generation_date is not None

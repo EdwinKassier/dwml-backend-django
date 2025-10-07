@@ -32,7 +32,8 @@ class PortfolioLog(models.Model):
     """Model for storing portfolio calculation logs."""
 
     symbol = models.CharField(max_length=100, db_index=True)
-    investment = models.FloatField()
+    message = models.TextField()
+    level = models.CharField(max_length=20)
     generation_date = models.DateTimeField(auto_now_add=True, db_index=True)
 
     class Meta:
@@ -43,7 +44,7 @@ class PortfolioLog(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.symbol} - ${self.investment}"
+        return f"{self.symbol} - {self.level}"
 
 
 class PortfolioResultSerializer(serializers.ModelSerializer):
