@@ -1,7 +1,8 @@
 """Unit tests for Django models."""
 import pytest
 from django.test import TestCase
-from api.models import Results, OPENING_AVERAGE, LOGGING
+from api.models.portfolio import Results, LOGGING
+from api.models.market_data import OpeningAverage
 
 
 @pytest.mark.django_db
@@ -43,11 +44,11 @@ class TestResultsModel:
 @pytest.mark.django_db
 @pytest.mark.unit
 class TestOpeningAverageModel:
-    """Test cases for OPENING_AVERAGE model."""
+    """Test cases for OpeningAverage model."""
 
     def test_create_opening_average(self):
-        """Test creating an OPENING_AVERAGE instance."""
-        avg = OPENING_AVERAGE.objects.create(
+        """Test creating an OpeningAverage instance."""
+        avg = OpeningAverage.objects.create(
             SYMBOL="BTC",
             AVERAGE=45000.0
         )

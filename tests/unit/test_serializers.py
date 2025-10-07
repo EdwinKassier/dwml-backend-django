@@ -1,7 +1,7 @@
 """Unit tests for API serializers."""
 import pytest
 from rest_framework import serializers
-from api.api_views import CalculationRequestSerializer
+from api.serializers.portfolio import CalculationRequestSerializer
 
 
 @pytest.mark.unit
