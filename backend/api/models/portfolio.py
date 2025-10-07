@@ -6,6 +6,7 @@ from rest_framework import serializers
 
 class PortfolioResult(models.Model):
     """Model for storing portfolio calculation results."""
+
     query = models.CharField(max_length=100, db_index=True)
     number_coins = models.FloatField()
     profit = models.FloatField()
@@ -16,11 +17,11 @@ class PortfolioResult(models.Model):
     generation_date = models.DateTimeField(auto_now_add=True, db_index=True)
 
     class Meta:
-        db_table = 'portfolio_results'
-        ordering = ['-generation_date']
+        db_table = "portfolio_results"
+        ordering = ["-generation_date"]
         indexes = [
-            models.Index(fields=['symbol', 'generation_date']),
-            models.Index(fields=['query']),
+            models.Index(fields=["symbol", "generation_date"]),
+            models.Index(fields=["query"]),
         ]
 
     def __str__(self):
@@ -29,15 +30,16 @@ class PortfolioResult(models.Model):
 
 class PortfolioLog(models.Model):
     """Model for storing portfolio calculation logs."""
+
     symbol = models.CharField(max_length=100, db_index=True)
     investment = models.FloatField()
     generation_date = models.DateTimeField(auto_now_add=True, db_index=True)
 
     class Meta:
-        db_table = 'portfolio_logs'
-        ordering = ['-generation_date']
+        db_table = "portfolio_logs"
+        ordering = ["-generation_date"]
         indexes = [
-            models.Index(fields=['symbol', 'generation_date']),
+            models.Index(fields=["symbol", "generation_date"]),
         ]
 
     def __str__(self):
@@ -46,16 +48,18 @@ class PortfolioLog(models.Model):
 
 class PortfolioResultSerializer(serializers.ModelSerializer):
     """Serializer for PortfolioResult model."""
+
     class Meta:
         model = PortfolioResult
-        fields = '__all__'
+        fields = "__all__"
 
 
 class PortfolioLogSerializer(serializers.ModelSerializer):
     """Serializer for PortfolioLog model."""
+
     class Meta:
         model = PortfolioLog
-        fields = '__all__'
+        fields = "__all__"
 
 
 # Backwards compatibility aliases

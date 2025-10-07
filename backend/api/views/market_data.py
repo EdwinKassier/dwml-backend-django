@@ -18,12 +18,12 @@ def opening_average_list(request):
     """
     List all opening averages, or create a new opening average.
     """
-    if request.method == 'GET':
+    if request.method == "GET":
         averages = OpeningAverage.objects.all()
         serializer = OpeningAverageSerializer(averages, many=True)
         return Response(serializer.data)
 
-    elif request.method == 'POST':
+    elif request.method == "POST":
         data = JSONParser().parse(request)
         serializer = OpeningAverageSerializer(data=data)
         if serializer.is_valid():
@@ -43,11 +43,11 @@ def opening_average_detail(request, symbol):
     except OpeningAverage.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if request.method == 'GET':
+    if request.method == "GET":
         serializer = OpeningAverageSerializer(average)
         return Response(serializer.data)
 
-    elif request.method == 'POST':
+    elif request.method == "POST":
         data = JSONParser().parse(request)
         serializer = OpeningAverageSerializer(average, data=data)
         if serializer.is_valid():
@@ -55,6 +55,6 @@ def opening_average_detail(request, symbol):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    elif request.method == 'DELETE':
+    elif request.method == "DELETE":
         average.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

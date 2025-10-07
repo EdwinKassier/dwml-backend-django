@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path, include
 from strawberry.django.views import GraphQLView
@@ -21,16 +22,18 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from api.schema import schema
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/v1/', include("api.urls")),
+    path("admin/", admin.site.urls),
+    path("api/v1/", include("api.urls")),
     # Backwards compatibility
-    path('api/', include("api.urls")),
+    path("api/", include("api.urls")),
     path("graphql/", GraphQLView.as_view(schema=schema)),
-    
     # API Documentation
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path(
+        "api/docs/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
+    ),
     # Prometheus metrics
-    path('metrics/', include('django_prometheus.urls')),
+    path("metrics/", include("django_prometheus.urls")),
 ]

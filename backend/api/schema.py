@@ -11,6 +11,7 @@ class ProcessRequestResult:
     message: str
     graph_data: str
 
+
 # Define a GraphQL schema
 @strawberry.type
 class Query:
@@ -24,9 +25,7 @@ class Query:
             return ProcessRequestResult(message=result, graph_data=graph_data)
         except Exception as exc:
             print(exc)
-            return ProcessRequestResult(message="Symbol doesn't exist", graph_data=[])
-
-
+            return ProcessRequestResult(message="Symbol doesn't exist", graph_data="")
 
 
 schema = strawberry.Schema(query=Query)

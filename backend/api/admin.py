@@ -7,4 +7,3 @@ from api.models.market_data import OpeningAverage
 admin.site.register(Results)
 admin.site.register(OpeningAverage)
 admin.site.register(LOGGING)
-

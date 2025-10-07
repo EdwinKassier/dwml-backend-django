@@ -10,9 +10,11 @@ from datetime import datetime
 @permission_classes([AllowAny])
 def health_check(request):
     """Health check endpoint for deployment verification."""
-    return Response({
-        "status": "healthy",
-        "version": "1.0.0",
-        "timestamp": datetime.now().isoformat(),
-        "service": "Crypto API"
-    })
+    return Response(
+        {
+            "status": "healthy",
+            "version": "1.0.0",
+            "timestamp": datetime.now().isoformat(),
+            "service": "Crypto API",
+        }
+    )

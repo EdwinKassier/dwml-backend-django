@@ -17,25 +17,18 @@ def covid_prediction(request):
     """
     try:
         logger.info("Processing COVID prediction request")
-        
+
         # Use service layer for business logic
         analytics_service = AnalyticsService()
         result = analytics_service.get_covid_prediction()
 
-        if result['success']:
-            return Response({
-                'success': True,
-                'data': result['data']
-            }, status=200)
+        if result["success"]:
+            return Response({"success": True, "data": result["data"]}, status=200)
         else:
-            return Response({
-                'success': False,
-                'error': result['error']
-            }, status=500)
+            return Response({"success": False, "error": result["error"]}, status=500)
 
     except Exception as e:
         logger.exception(f"Error in COVID prediction: {str(e)}")
-        return Response({
-            'success': False,
-            'error': 'Internal server error'
-        }, status=500)
+        return Response(
+            {"success": False, "error": "Internal server error"}, status=500
+        )

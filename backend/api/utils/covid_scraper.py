@@ -17,141 +17,161 @@ from sklearn.metrics import mean_squared_error
 
 class CovidScraper:
 
-  def __init__(self, country, date, apiCall):
-    self.country = country
-    self.target_date = date
-    self.api_call = apiCall
-    self.clean_data = None
-    self.model = None
-    self.predicted_data = None
+    def __init__(self, country, date, apiCall):
+        self.country = country
+        self.target_date = date
+        self.api_call = apiCall
+        self.clean_data = None
+        self.model = None
+        self.predicted_data = None
 
-  
-  def driver_logic(self):
+    def driver_logic(self):
 
-    self.get_raw_data()
-    self.train_model()
-    self.predict()
-    if not self.api_call:
-      self.chart()
-    else:
-      return self.predicted_data.to_json(orient="records")
+        self.get_raw_data()
+        self.train_model()
+        self.predict()
+        if not self.api_call:
+            self.chart()
+        else:
+            return self.predicted_data.to_json(orient="records")
 
-  # Extract
-  def get_raw_data(self):
+    # Extract
+    def get_raw_data(self):
 
-    url = f'https://www.worldometers.info/coronavirus/country/{self.country}/'
-    headers = {'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Mobile Safari/537.36'}
-    response = requests.get(url, headers=headers)
+        url = f"https://www.worldometers.info/coronavirus/country/{self.country}/"
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Mobile Safari/537.36"
+        }
+        response = requests.get(url, headers=headers)
 
-    soup = BeautifulSoup(response.text, 'html.parser')
-    scripts = soup.find_all('script')
-    for script in scripts:
-        if "Highcharts.chart('graph-cases-daily'" in str(script):
-            jsonStr = str(script)
-            
-            dates = re.search(r'(xAxis: {[\s\S\W\w]*)(categories: )(\[[\w\W\s\W]*\"\])', jsonStr)
-            dates = dates.group(3).replace('[','').replace(']','')
-            dates = ast.literal_eval(dates)
-            dates = [ x for x in dates]
-            
-            data = re.search(r"(name: '7-day moving average')[\s\S\W\w]*(data:[\s\S\W\w]*\d\])", jsonStr, re.IGNORECASE)
-            data = data.group(2).split('data:')[-1].strip().replace('[','').replace(']','').split(',')
+        soup = BeautifulSoup(response.text, "html.parser")
+        scripts = soup.find_all("script")
+        for script in scripts:
+            if "Highcharts.chart('graph-cases-daily'" in str(script):
+                jsonStr = str(script)
 
+                dates = re.search(
+                    r"(xAxis: {[\s\S\W\w]*)(categories: )(\[[\w\W\s\W]*\"\])", jsonStr
+                )
+                dates = dates.group(3).replace("[", "").replace("]", "")
+                dates = ast.literal_eval(dates)
+                dates = [x for x in dates]
 
-    df = pd.DataFrame({'Date':dates, '7DA':data})
+                data = re.search(
+                    r"(name: '7-day moving average')[\s\S\W\w]*(data:[\s\S\W\w]*\d\])",
+                    jsonStr,
+                    re.IGNORECASE,
+                )
+                data = (
+                    data.group(2)
+                    .split("data:")[-1]
+                    .strip()
+                    .replace("[", "")
+                    .replace("]", "")
+                    .split(",")
+                )
 
-    # Cleaning Step - Transform
+        df = pd.DataFrame({"Date": dates, "7DA": data})
 
-    # Allow us to differentiate the values in training set
-    df['Predicted'] = False
+        # Cleaning Step - Transform
 
-    # Converting all daily case numbers to numbers
-    df['7DA'] = pd.to_numeric(df['7DA'], errors='coerce')
-    df = df.dropna(subset=['7DA'])
-    df['7DA'] = df['7DA'].astype(int)
+        # Allow us to differentiate the values in training set
+        df["Predicted"] = False
 
-    # Convert all dates to date time
-    df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
+        # Converting all daily case numbers to numbers
+        df["7DA"] = pd.to_numeric(df["7DA"], errors="coerce")
+        df = df.dropna(subset=["7DA"])
+        df["7DA"] = df["7DA"].astype(int)
 
-    # Filter out non zero values
-    df = df[df["7DA"] > 0]
+        # Convert all dates to date time
+        df["Date"] = pd.to_datetime(df["Date"], errors="coerce")
 
-    # Remove all dates after target date
-    df = df[df['Date'] <= self.target_date]
+        # Filter out non zero values
+        df = df[df["7DA"] > 0]
 
-    self.clean_data = df
+        # Remove all dates after target date
+        df = df[df["Date"] <= self.target_date]
 
-  # Learn
-  def train_model(self):
+        self.clean_data = df
 
-    df = self.clean_data
+    # Learn
+    def train_model(self):
 
-    try:
-      
-      # Convert date to float for processing
-      df['Date'] = df['Date'].astype('int64').astype(float)
+        df = self.clean_data
 
-      # We are using the full available data set to give maximum
-      y = df['7DA'].values.reshape(-1, 1)
-      X = df['Date'].values.reshape(-1, 1)
+        try:
 
-      ada_boost = AdaBoostRegressor()
-      ada_boost.fit(X, y)
+            # Convert date to float for processing
+            df["Date"] = df["Date"].astype("int64").astype(float)
 
-      self.model = ada_boost
+            # We are using the full available data set to give maximum
+            y = df["7DA"].values.reshape(-1, 1)
+            X = df["Date"].values.reshape(-1, 1)
 
-    except Exception as e:
-      print(e)
+            ada_boost = AdaBoostRegressor()
+            ada_boost.fit(X, y)
 
-  # Predict
-  def predict(self):
+            self.model = ada_boost
 
-    df = self.clean_data
+        except Exception as e:
+            print(e)
 
-    # Number of future dates to generate
-    x = 7
+    # Predict
+    def predict(self):
 
-    start_date = datetime.strptime(self.target_date, '%Y-%m-%d')  # Use the last date in your existing DataFrame
-    future_dates = [start_date + timedelta(days=i) for i in range(1, x+1)]
+        df = self.clean_data
 
-    # Create a DataFrame with future dates and 7DA set to null
-    future_data = {
-        'Date': future_dates,
-        '7DA': [None] * x
-    }
-    future_df = pd.DataFrame(future_data)
+        # Number of future dates to generate
+        x = 7
 
-    future_df['Date'] = future_df['Date'].astype('int64').astype(float)
+        start_date = datetime.strptime(
+            self.target_date, "%Y-%m-%d"
+        )  # Use the last date in your existing DataFrame
+        future_dates = [start_date + timedelta(days=i) for i in range(1, x + 1)]
 
-    X_pred = future_df['Date'].values.reshape(-1, 1)
+        # Create a DataFrame with future dates and 7DA set to null
+        future_data = {"Date": future_dates, "7DA": [None] * x}
+        future_df = pd.DataFrame(future_data)
 
-    y_pred = self.model.predict(X_pred)
+        future_df["Date"] = future_df["Date"].astype("int64").astype(float)
 
-    df_preds = pd.DataFrame({'Date':future_dates,'7DA': [round(x) for x in y_pred.squeeze()],'Predicted':True})
+        X_pred = future_df["Date"].values.reshape(-1, 1)
 
-    df_preds['Date'] = pd.to_numeric(df_preds['Date'], errors='coerce')
+        y_pred = self.model.predict(X_pred)
 
-    frames = [df, df_preds]
+        df_preds = pd.DataFrame(
+            {
+                "Date": future_dates,
+                "7DA": [round(x) for x in y_pred.squeeze()],
+                "Predicted": True,
+            }
+        )
 
-    result = pd.concat(frames)
+        df_preds["Date"] = pd.to_numeric(df_preds["Date"], errors="coerce")
 
-    # Clean up and consistency for charting
+        frames = [df, df_preds]
 
-    result['Date'] = pd.to_numeric(result['Date'], errors='coerce')
+        result = pd.concat(frames)
 
-    result['Date'] = pd.to_datetime(result['Date'], errors='coerce')
+        # Clean up and consistency for charting
 
-    result.reset_index(drop=True, inplace=True)
+        result["Date"] = pd.to_numeric(result["Date"], errors="coerce")
 
-    self.predicted_data = result
+        result["Date"] = pd.to_datetime(result["Date"], errors="coerce")
 
-  def chart(self):
+        result.reset_index(drop=True, inplace=True)
 
-    target_data = self.predicted_data
+        self.predicted_data = result
 
-    plt.figure(figsize=(12, 6))  # Increase figure size
-    sns.lineplot(x = "Date", y = "7DA", hue="Predicted", data=target_data.tail(50), dashes=False) # We are tailing the data to better show the predictive result
-    plt.xticks(rotation=45)  # Rotate x-axis labels
-    plt.tight_layout()  # Adjust layout
+    def chart(self):
 
-    plt.show()
+        target_data = self.predicted_data
+
+        plt.figure(figsize=(12, 6))  # Increase figure size
+        sns.lineplot(
+            x="Date", y="7DA", hue="Predicted", data=target_data.tail(50), dashes=False
+        )  # We are tailing the data to better show the predictive result
+        plt.xticks(rotation=45)  # Rotate x-axis labels
+        plt.tight_layout()  # Adjust layout
+
+        plt.show()
