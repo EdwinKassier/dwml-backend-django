@@ -23,9 +23,9 @@ from api.schema import schema
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/v1/", include("api.urls")),
+    path("api/v1/", include("api.urls", namespace="api-v1")),
     # Backwards compatibility
-    path("api/", include("api.urls")),
+    path("api/", include("api.urls", namespace="api")),
     path("graphql/", GraphQLView.as_view(schema=schema)),
     # API Documentation
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),

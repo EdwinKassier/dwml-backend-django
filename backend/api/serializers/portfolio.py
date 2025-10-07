@@ -3,6 +3,7 @@
 from rest_framework import serializers
 from api.models.portfolio import Results, LOGGING
 from api.models.portfolio import ResultsSerializer, LOGGINGSerializer
+from decimal import Decimal
 import re
 
 
@@ -18,8 +19,8 @@ class CalculationRequestSerializer(serializers.Serializer):
     investment = serializers.DecimalField(
         max_digits=12,
         decimal_places=2,
-        min_value=0.01,
-        max_value=1000000.00,
+        min_value=Decimal('0.01'),
+        max_value=Decimal('1000000.00'),
         required=True,
         help_text="Investment amount in USD",
     )
