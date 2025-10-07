@@ -317,11 +317,11 @@ Parameters:
 
 ## 🏗 Architecture
 
-See `Architecture.png` for the enterprise-ready system architecture using GCP components.
+See `docs/Architecture.png` for the enterprise-ready system architecture using GCP components.
 
 ### Build Pipeline
 
-See `BuildPipeline.png` for the CI/CD pipeline visualization.
+See `docs/BuildPipeline.png` for the CI/CD pipeline visualization.
 
 ## 🤝 Contributing
 
