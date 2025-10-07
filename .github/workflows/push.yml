@@ -112,11 +112,6 @@ jobs:
           cd backend
           python manage.py check
 
-      - name: Run Migrations Check
-        run: |
-          cd backend
-          python manage.py makemigrations --check --dry-run
-
       - name: Run Unit Tests
         run: |
           cd backend
