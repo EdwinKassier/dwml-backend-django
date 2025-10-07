@@ -79,6 +79,14 @@ logs/
 # Temporary files
 *.tmp
 *.bak
+*.old
+*_old.py
+*_backup.py
+
+# Python cache
+*.pyc
+*.pyo
+__pycache__/
 
 # Docker
 .dockerignore
