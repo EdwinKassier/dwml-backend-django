@@ -1,5 +1,9 @@
 name: CI/CD Pipeline
 
+# Workflow Behavior:
+# - Quality checks and testing: Run on every push to main/master/develop and PRs
+# - Deployment and verification: Only run on tagged releases (prod/v*)
+
 on:
   push:
     branches:
@@ -21,7 +25,7 @@ env:
   ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
 jobs:
-  # Job 1: Code Quality Checks
+  # Job 1: Code Quality Checks (runs on every push to main)
   quality-checks:
     name: Code Quality & Security
     runs-on: ubuntu-latest
@@ -81,7 +85,7 @@ jobs:
             safety-report.json
           retention-days: 30
 
-  # Job 2: Testing
+  # Job 2: Testing (runs on every push to main)
   testing:
     name: Run Tests & Coverage
     runs-on: ubuntu-latest
@@ -152,7 +156,7 @@ jobs:
             backend/pytest-report.xml
           retention-days: 30
 
-  # Job 3: Tag-Based Deployment
+  # Job 3: Tag-Based Deployment (only runs on tagged releases)
   deploy:
     name: Deploy to Production
     runs-on: ubuntu-latest
@@ -324,7 +328,7 @@ jobs:
           echo "✅✅✅ Django deployment successful! ✅✅✅"
           echo "Version ${{ steps.extract_version.outputs.VERSION }} is now live!"
 
-  # Job 4: Post-Deployment Verification
+  # Job 4: Post-Deployment Verification (only runs on tagged releases)
   verify-deployment:
     name: Verify Deployment
     runs-on: ubuntu-latest
