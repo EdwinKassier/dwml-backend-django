@@ -1,10 +1,11 @@
-"""URL configuration for the API app."""
+"""URL configuration for the API app with versioning."""
 
 from django.urls import path, include
 from .views import portfolio, market_data, analytics, health
 
 app_name = 'api'
 
+# API v1 URLs
 urlpatterns = [
     # Health endpoints
     path('health/', health.health_check, name='health-check'),
@@ -22,4 +23,7 @@ urlpatterns = [
     
     # Analytics endpoints
     path('predictions/covid/', analytics.covid_prediction, name='covid-prediction'),
+    
+    # Backwards compatibility endpoints
+    path('process_request/', portfolio.process_request, name='process-request-legacy'),
 ]

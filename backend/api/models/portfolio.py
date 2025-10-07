@@ -4,48 +4,62 @@ from django.db import models
 from rest_framework import serializers
 
 
-class Results(models.Model):
+class PortfolioResult(models.Model):
     """Model for storing portfolio calculation results."""
-    QUERY = models.CharField(max_length=100)
-    NUMBERCOINS = models.FloatField()
-    PROFIT = models.FloatField()
-    GROWTHFACTOR = models.FloatField()
-    LAMBOS = models.FloatField()
-    INVESTMENT = models.FloatField()
-    SYMBOL = models.CharField(max_length=100)
-    GENERATIONDATE = models.DateTimeField(auto_now_add=True)
+    query = models.CharField(max_length=100, db_index=True)
+    number_coins = models.FloatField()
+    profit = models.FloatField()
+    growth_factor = models.FloatField()
+    lambos = models.FloatField()
+    investment = models.FloatField()
+    symbol = models.CharField(max_length=100, db_index=True)
+    generation_date = models.DateTimeField(auto_now_add=True, db_index=True)
 
     class Meta:
-        db_table = 'results'
-        ordering = ['-GENERATIONDATE']
+        db_table = 'portfolio_results'
+        ordering = ['-generation_date']
+        indexes = [
+            models.Index(fields=['symbol', 'generation_date']),
+            models.Index(fields=['query']),
+        ]
 
     def __str__(self):
-        return f"{self.SYMBOL} - {self.QUERY}"
+        return f"{self.symbol} - {self.query}"
 
 
-class LOGGING(models.Model):
+class PortfolioLog(models.Model):
     """Model for storing portfolio calculation logs."""
-    SYMBOL = models.CharField(max_length=100)
-    INVESTMENT = models.FloatField()
-    GENERATIONDATE = models.DateTimeField(auto_now_add=True)
+    symbol = models.CharField(max_length=100, db_index=True)
+    investment = models.FloatField()
+    generation_date = models.DateTimeField(auto_now_add=True, db_index=True)
 
     class Meta:
-        db_table = 'logging'
-        ordering = ['-GENERATIONDATE']
+        db_table = 'portfolio_logs'
+        ordering = ['-generation_date']
+        indexes = [
+            models.Index(fields=['symbol', 'generation_date']),
+        ]
 
     def __str__(self):
-        return f"{self.SYMBOL} - ${self.INVESTMENT}"
+        return f"{self.symbol} - ${self.investment}"
 
 
-class ResultsSerializer(serializers.ModelSerializer):
-    """Serializer for Results model."""
+class PortfolioResultSerializer(serializers.ModelSerializer):
+    """Serializer for PortfolioResult model."""
     class Meta:
-        model = Results
+        model = PortfolioResult
         fields = '__all__'
 
 
-class LOGGINGSerializer(serializers.ModelSerializer):
-    """Serializer for LOGGING model."""
+class PortfolioLogSerializer(serializers.ModelSerializer):
+    """Serializer for PortfolioLog model."""
     class Meta:
-        model = LOGGING
+        model = PortfolioLog
         fields = '__all__'
+
+
+# Backwards compatibility aliases
+Results = PortfolioResult
+LOGGING = PortfolioLog
+ResultsSerializer = PortfolioResultSerializer
+LOGGINGSerializer = PortfolioLogSerializer

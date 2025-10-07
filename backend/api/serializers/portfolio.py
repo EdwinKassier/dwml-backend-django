@@ -1,8 +1,8 @@
 """Portfolio-related serializers."""
 
 from rest_framework import serializers
-from api.models import Results, LOGGING
-from api.models import ResultsSerializer, LOGGINGSerializer
+from api.models.portfolio import Results, LOGGING
+from api.models.portfolio import ResultsSerializer, LOGGINGSerializer
 import re
 
 

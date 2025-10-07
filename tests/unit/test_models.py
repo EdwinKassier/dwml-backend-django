@@ -1,44 +1,44 @@
 """Unit tests for Django models."""
 import pytest
 from django.test import TestCase
-from api.models.portfolio import Results, LOGGING
+from api.models.portfolio import PortfolioResult, PortfolioLog
 from api.models.market_data import OpeningAverage
 
 
 @pytest.mark.django_db
 @pytest.mark.unit
-class TestResultsModel:
-    """Test cases for Results model."""
+class TestPortfolioResultModel:
+    """Test cases for PortfolioResult model."""
 
     def test_create_result(self):
-        """Test creating a Results instance."""
-        result = Results.objects.create(
-            QUERY="BTC",
-            NUMBERCOINS=1.5,
-            PROFIT=50000.0,
-            GROWTHFACTOR=2.5,
-            LAMBOS=0.25,
-            INVESTMENT=10000.0,
-            SYMBOL="BTC"
+        """Test creating a PortfolioResult instance."""
+        result = PortfolioResult.objects.create(
+            query="BTC",
+            number_coins=1.5,
+            profit=50000.0,
+            growth_factor=2.5,
+            lambos=0.25,
+            investment=10000.0,
+            symbol="BTC"
         )
-        assert result.SYMBOL == "BTC"
-        assert result.NUMBERCOINS == 1.5
-        assert result.PROFIT == 50000.0
+        assert result.symbol == "BTC"
+        assert result.number_coins == 1.5
+        assert result.profit == 50000.0
         assert result.id is not None
 
     def test_result_string_fields(self):
         """Test string field constraints."""
-        result = Results.objects.create(
-            QUERY="ETH",
-            NUMBERCOINS=10.0,
-            PROFIT=5000.0,
-            GROWTHFACTOR=1.5,
-            LAMBOS=0.025,
-            INVESTMENT=1000.0,
-            SYMBOL="ETH"
+        result = PortfolioResult.objects.create(
+            query="ETH",
+            number_coins=10.0,
+            profit=5000.0,
+            growth_factor=1.5,
+            lambos=0.025,
+            investment=1000.0,
+            symbol="ETH"
         )
-        assert len(result.SYMBOL) <= 100
-        assert len(result.QUERY) <= 100
+        assert len(result.symbol) <= 100
+        assert len(result.query) <= 100
 
 
 @pytest.mark.django_db
@@ -49,25 +49,25 @@ class TestOpeningAverageModel:
     def test_create_opening_average(self):
         """Test creating an OpeningAverage instance."""
         avg = OpeningAverage.objects.create(
-            SYMBOL="BTC",
-            AVERAGE=45000.0
+            symbol="BTC",
+            average=45000.0
         )
-        assert avg.SYMBOL == "BTC"
-        assert avg.AVERAGE == 45000.0
-        assert avg.GENERATIONDATE is not None
+        assert avg.symbol == "BTC"
+        assert avg.average == 45000.0
+        assert avg.generation_date is not None
 
 
 @pytest.mark.django_db
 @pytest.mark.unit
-class TestLoggingModel:
-    """Test cases for LOGGING model."""
+class TestPortfolioLogModel:
+    """Test cases for PortfolioLog model."""
 
     def test_create_logging_entry(self):
-        """Test creating a LOGGING instance."""
-        log = LOGGING.objects.create(
-            SYMBOL="ETH",
-            INVESTMENT=1000.0
+        """Test creating a PortfolioLog instance."""
+        log = PortfolioLog.objects.create(
+            symbol="ETH",
+            investment=1000.0
         )
-        assert log.SYMBOL == "ETH"
-        assert log.INVESTMENT == 1000.0
-        assert log.GENERATIONDATE is not None
+        assert log.symbol == "ETH"
+        assert log.investment == 1000.0
+        assert log.generation_date is not None

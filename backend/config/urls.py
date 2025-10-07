@@ -23,6 +23,8 @@ from api.schema import schema
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include("api.urls")),
+    # Backwards compatibility
+    path('api/', include("api.urls")),
     path("graphql/", GraphQLView.as_view(schema=schema)),
     
     # API Documentation

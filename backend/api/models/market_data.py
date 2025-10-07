@@ -6,16 +6,19 @@ from rest_framework import serializers
 
 class OpeningAverage(models.Model):
     """Model for storing opening average prices."""
-    SYMBOL = models.CharField(max_length=100)
-    AVERAGE = models.FloatField()
-    GENERATIONDATE = models.DateTimeField(auto_now_add=True)
+    symbol = models.CharField(max_length=100, db_index=True)
+    average = models.FloatField()
+    generation_date = models.DateTimeField(auto_now_add=True, db_index=True)
 
     class Meta:
-        db_table = 'opening_average'
-        ordering = ['-GENERATIONDATE']
+        db_table = 'opening_averages'
+        ordering = ['-generation_date']
+        indexes = [
+            models.Index(fields=['symbol', 'generation_date']),
+        ]
 
     def __str__(self):
-        return f"{self.SYMBOL} - ${self.AVERAGE}"
+        return f"{self.symbol} - ${self.average}"
 
 
 class OpeningAverageSerializer(serializers.ModelSerializer):

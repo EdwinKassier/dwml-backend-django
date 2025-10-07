@@ -14,7 +14,7 @@ class PortfolioService(BaseService):
     def __init__(self):
         super().__init__()
         self.data_collector = DataCollector()
-        self.data_cache = DataCache()
+        # DataCache will be initialized when needed with specific parameters
     
     def calculate_portfolio_value(self, symbol: str, investment: Decimal) -> Dict[str, Any]:
         """
@@ -63,8 +63,9 @@ class PortfolioService(BaseService):
                 'roi_percentage': (profit / float(investment)) * 100 if investment > 0 else 0
             }
             
-            # Cache the result
-            self.data_cache.cache_result(symbol, result)
+            # Cache the result (initialize DataCache with parameters)
+            data_cache = DataCache(symbol, investment)
+            data_cache.cache_result(symbol, result)
             
             return self.success_response(result)
             

@@ -12,7 +12,7 @@ class MarketDataService(BaseService):
     def __init__(self):
         super().__init__()
         self.data_collector = DataCollector()
-        self.data_cache = DataCache()
+        # DataCache will be initialized when needed with specific parameters
     
     def get_current_price(self, symbol: str) -> Dict[str, Any]:
         """
@@ -25,8 +25,9 @@ class MarketDataService(BaseService):
             Dict containing current price or error
         """
         try:
-            # Check cache first
-            cached_price = self.data_cache.get_cached_price(symbol)
+            # Check cache first (initialize DataCache with symbol)
+            data_cache = DataCache(symbol, 0)  # investment not needed for price check
+            cached_price = data_cache.get_cached_price(symbol)
             if cached_price:
                 return self.success_response({
                     'symbol': symbol,
@@ -45,7 +46,7 @@ class MarketDataService(BaseService):
             current_price = market_data.get('current_price', 0)
             
             # Cache the result
-            self.data_cache.cache_price(symbol, current_price)
+            data_cache.cache_price(symbol, current_price)
             
             return self.success_response({
                 'symbol': symbol,

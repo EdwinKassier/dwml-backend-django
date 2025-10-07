@@ -3,12 +3,10 @@ import sqlite3
 from datetime import datetime, timedelta
 from dateutil import parser
 
-from api.models import Results
-from api.models import ResultsSerializer
-from api.models import OPENING_AVERAGE
-from api.models import OPENING_AVERAGESerializer
-from api.models import LOGGING
-from api.models import LOGGINGSerializer
+from api.models.portfolio import Results, LOGGING
+from api.models.portfolio import ResultsSerializer, LOGGINGSerializer
+from api.models.market_data import OpeningAverage
+from api.models.market_data import OpeningAverageSerializer
 
 
 class DataCache:
@@ -56,10 +54,10 @@ class DataCache:
     #Check if we have already stored a cached version of the opening price data for the symbol
     def check_if_historical_cache_exists(self):
 
-        existing_result_raw = OPENING_AVERAGE.objects.get(SYMBOL=self.coin_symbol) if OPENING_AVERAGE.objects.filter(SYMBOL=self.coin_symbol).exists() else ''
+        existing_result_raw = OpeningAverage.objects.get(SYMBOL=self.coin_symbol) if OpeningAverage.objects.filter(SYMBOL=self.coin_symbol).exists() else ''
 
 
-        query = f"SELECT * from OPENING_AVERAGE WHERE SYMBOL = '{self.coin_symbol}'"
+        query = f"SELECT * from OpeningAverage WHERE SYMBOL = '{self.coin_symbol}'"
 
         if(existing_result_raw != ''):
             print(f'There exists a historical cache for this query {query}')
@@ -71,12 +69,12 @@ class DataCache:
     #Get cached version of the opening price data for the symbol
     def get_historical_cache(self):
 
-        existing_result_raw = OPENING_AVERAGE.objects.get(SYMBOL=self.coin_symbol) if OPENING_AVERAGE.objects.filter(SYMBOL=self.coin_symbol).exists() else ''
+        existing_result_raw = OpeningAverage.objects.get(SYMBOL=self.coin_symbol) if OpeningAverage.objects.filter(SYMBOL=self.coin_symbol).exists() else ''
 
-        query = f"SELECT * from OPENING_AVERAGE WHERE SYMBOL = '{self.coin_symbol}'"
+        query = f"SELECT * from OpeningAverage WHERE SYMBOL = '{self.coin_symbol}'"
 
         if(existing_result_raw != ''):
-            serializer = OPENING_AVERAGESerializer(existing_result_raw, many=False)
+            serializer = OpeningAverageSerializer(existing_result_raw, many=False)
             
             print(serializer.data)
             return(serializer.data)
@@ -116,7 +114,7 @@ class DataCache:
         combined_results = {**result, 'SYMBOL':self.coin_symbol}
 
         try:
-            opening_average_item = OPENING_AVERAGE(SYMBOL=self.coin_symbol,AVERAGE=result['AVERAGE'],GENERATIONDATE=datetime.now().isoformat())
+            opening_average_item = OpeningAverage(SYMBOL=self.coin_symbol,AVERAGE=result['AVERAGE'],GENERATIONDATE=datetime.now().isoformat())
 
             opening_average_item.save()
         except Exception as e:
