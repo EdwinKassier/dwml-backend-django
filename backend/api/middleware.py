@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.utils.deprecation import MiddlewareMixin
 from rest_framework import status
 from rest_framework.response import Response
-from api.shared.exceptions.custom_exceptions import CryptoAPIException
+from shared.exceptions.custom_exceptions import CryptoAPIException
 
 logger = logging.getLogger(__name__)
 
