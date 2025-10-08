@@ -246,7 +246,7 @@ jobs:
             --set-env-vars="VERSION=${{ steps.extract_version.outputs.VERSION }}" \
             --set-env-vars="SECRET_KEY=${{ secrets.SECRET_KEY }}" \
             --set-env-vars="DEBUG=False" \
-            --set-env-vars="ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }},${{ steps.extract_version.outputs.SERVICE_NAME }}-${{ env.PROJECT_ID }}.${{ env.RUN_REGION }}.run.app,*.run.app" \
+            --set-env-vars="ALLOWED_HOSTS=*" \
             --set-env-vars="DATABASE_URL=${{ secrets.DATABASE_URL }}" \
             --set-env-vars="REDIS_URL=${{ secrets.REDIS_URL }}"
 
