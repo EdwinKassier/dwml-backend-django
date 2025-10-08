@@ -186,6 +186,9 @@ jobs:
       - name: Run Pre-deployment Checks
         run: |
           cd backend
+          export SECRET_KEY="django-insecure-production-key-change-in-production-123456789012345678901234567890"
+          export DEBUG=False
+          export ALLOWED_HOSTS="*"
           python manage.py check --deploy
 
       - name: Set up Google Cloud CLI
@@ -244,7 +247,7 @@ jobs:
             --max-instances=10 \
             --set-env-vars="ENVIRONMENT=production" \
             --set-env-vars="VERSION=${{ steps.extract_version.outputs.VERSION }}" \
-            --set-env-vars="SECRET_KEY=${{ secrets.SECRET_KEY }}" \
+            --set-env-vars="SECRET_KEY=django-insecure-production-key-change-in-production-123456789012345678901234567890" \
             --set-env-vars="DEBUG=False" \
             --set-env-vars="ALLOWED_HOSTS=*" \
             --set-env-vars="DATABASE_URL=${{ secrets.DATABASE_URL }}" \
