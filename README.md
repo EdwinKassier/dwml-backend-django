@@ -1,348 +1,590 @@
-# Cryptocurrency Portfolio API 🚀
+<div align="center">
 
-[![CI/CD Pipeline](https://github.com/YOUR_USERNAME/crypto-backend-api/workflows/CI%2FCD%20Pipeline/badge.svg)](https://github.com/YOUR_USERNAME/crypto-backend-api/actions)
-[![codecov](https://codecov.io/gh/YOUR_USERNAME/crypto-backend-api/branch/master/graph/badge.svg)](https://codecov.io/gh/YOUR_USERNAME/crypto-backend-api)
+<img src="https://www.edwinkassier.com/Assets/Monogram.png" alt="Ashes Project Monogram" width="80" height="80">
+
+# 🚀 Ashes Project Django REST & GraphQL API Boilerplate
+
+<div align="center">
+
+**A production-ready Django API template with REST and GraphQL endpoints**
+
+</div>
+
+<div align="center">
+
+[![codecov](https://codecov.io/gh/YOUR_USERNAME/dwml-backend-django/branch/master/graph/badge.svg)](https://codecov.io/gh/YOUR_USERNAME/dwml-backend-django)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Django 4.1+](https://img.shields.io/badge/django-4.1+-green.svg)](https://www.djangoproject.com/)
+[![Django 5.2+](https://img.shields.io/badge/django-5.2+-green.svg)](https://www.djangoproject.com/)
+
+</div>
+
+<div align="center">
+
+[![Docker](https://img.shields.io/badge/docker-supported-blue.svg)](https://www.docker.com/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
-## 🎯 Introduction
+</div>
 
-A production-ready Django REST API for cryptocurrency portfolio tracking and analysis with comprehensive CI/CD pipeline, code quality tools, and automated deployment.
+</div>
 
-## ✨ Features
+---
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Key Features](#key-features)
+- [System Architecture](#system-architecture)
+- [Quick Start](#quick-start)
+- [Installation Options](#installation-options)
+- [Testing](#testing)
+- [Code Quality](#code-quality)
+- [Security](#security)
+- [CI/CD Pipeline](#cicd-pipeline)
+- [Available Commands](#available-commands)
+- [Deployment](#deployment)
+- [Monitoring](#monitoring)
+- [API Documentation](#api-documentation)
+- [Project Structure](#project-structure)
+- [Contributing](#contributing)
+- [Troubleshooting](#troubleshooting)
+- [License](#license)
+
+---
+
+## Overview
+
+A Django REST API boilerplate designed for rapid development of production-ready web APIs.
+
+This template provides everything you need to build scalable, maintainable web APIs with Django. It includes features like automated testing, CI/CD pipelines, security scanning, monitoring, and deployment automation.
+
+### API Architecture
+
+The boilerplate supports both **REST** and **GraphQL** endpoints, giving you flexibility in how you interact with your API:
+
+- **REST API**: Traditional HTTP endpoints with JSON responses
+- **GraphQL**: Flexible query language for efficient data fetching
+- **OpenAPI Documentation**: Interactive API documentation for both interfaces
+
+### Feature Overview
+
+| **Development** | **Testing** | **Deployment** |
+|:---|:---|:---|
+| Pre-commit hooks | Unit tests | Docker containers |
+| Code formatting | Integration tests | CI/CD pipeline |
+| Type checking | Coverage reporting | Cloud deployment |
+| Linting | Test automation | Health monitoring |
+
+---
+
+## Key Features
+
+| **Architecture** | **Security** | **Monitoring** | **Performance** |
+|:---|:---|:---|:---|
+| Clean Architecture | Security Scanning | Prometheus Metrics | Redis Caching |
+| Service Layer | Dependency Checks | Structured Logging | Database Optimization |
+| Dependency Injection | Authentication | Error Tracking | API Rate Limiting |
+
+### Feature Categories
+
+<details>
+<summary><b>Development Experience</b></summary>
 
 - ✅ **Code Quality**: Black, Flake8, isort, Mypy
-- ✅ **Testing**: Pytest with 80%+ coverage
-- ✅ **Security**: Bandit security scanning, Safety dependency checks
 - ✅ **Pre-commit Hooks**: Automated code quality checks
-- ✅ **CI/CD Pipeline**: GitHub Actions with tag-based deployment
 - ✅ **Type Checking**: Full mypy type annotations
-- ✅ **API Documentation**: OpenAPI 3.0 specification
-- ✅ **Monitoring**: Sentry error tracking, Prometheus metrics
-- ✅ **Caching**: Redis for performance optimization
+- ✅ **IDE Support**: VS Code, PyCharm configurations
+- ✅ **Hot Reload**: Development server with auto-reload
 
-## 🛠 Requirements
+</details>
 
-* Python 3.10+
-* pip or Pipenv
-* Git
-* Docker (optional, for containerized deployment)
+<details>
+<summary><b>Testing & Quality</b></summary>
 
-## 🚀 Quick Start
+- ✅ **Testing**: Pytest with 80%+ coverage
+- ✅ **Test Types**: Unit, integration, and API tests
+- ✅ **Coverage**: Automated coverage reporting
+- ✅ **Quality Gates**: Pre-commit quality checks
+- ✅ **Performance**: Load testing capabilities
 
-### 1. Clone the Repository
+</details>
 
-```bash
-git clone <repository-url>
-cd crypto-backend-api
+<details>
+<summary><b>Security & Compliance</b></summary>
+
+- ✅ **Security Scanning**: Bandit security analysis
+- ✅ **Dependency Checks**: Safety vulnerability scanning
+- ✅ **Authentication**: JWT, API Key, Session auth
+- ✅ **Authorization**: Role-based access control
+- ✅ **Data Protection**: Input validation and sanitization
+
+</details>
+
+<details>
+<summary><b>Production Ready</b></summary>
+
+- ✅ **Containerization**: Multi-stage Docker builds
+- ✅ **CI/CD Pipeline**: GitHub Actions automation
+- ✅ **Monitoring**: Prometheus metrics, Sentry integration
+- ✅ **Logging**: Structured JSON logging
+- ✅ **Health Checks**: Automated health monitoring
+- ✅ **Scaling**: Horizontal scaling support
+
+</details>
+
+---
+
+## System Architecture
+
+### CI/CD Pipeline Flow
+
+```mermaid
+graph TB
+    subgraph "👨‍💻 Development Phase"
+        DEV[👨‍💻 Developer]
+        FEATURE[🌿 Feature Branch]
+        PR[📝 Pull Request]
+    end
+    
+    subgraph "🔍 Continuous Integration"
+        QUALITY[✅ Code Quality<br/>Black • Flake8 • Mypy]
+        TEST[🧪 Test Suite<br/>Unit • Integration • Coverage]
+        SECURITY[🔒 Security Scan<br/>Bandit • Safety • Dependencies]
+    end
+    
+    subgraph "🚀 Continuous Deployment"
+        BUILD[🐳 Docker Build<br/>Multi-stage • Optimized]
+        PUSH[📤 Registry Push<br/>Artifact Registry]
+        DEPLOY[🚀 Cloud Deploy<br/>Google Cloud Run]
+        VERIFY[🏥 Health Check<br/>Endpoint Verification]
+    end
+    
+    subgraph "🌐 Production Environment"
+        PROD[🌐 Live Service<br/>Auto-scaling • Load Balancing]
+        MONITOR[📊 Monitoring<br/>Prometheus • Sentry • Logs]
+    end
+    
+    DEV -->|"git push"| FEATURE
+    FEATURE -->|"Create PR"| PR
+    PR -->|"Triggers"| QUALITY
+    QUALITY -->|"Pass"| TEST
+    TEST -->|"Pass"| SECURITY
+    SECURITY -->|"Pass"| BUILD
+    BUILD -->|"Success"| PUSH
+    PUSH -->|"Complete"| DEPLOY
+    DEPLOY -->|"Deployed"| VERIFY
+    VERIFY -->|"Healthy"| PROD
+    PROD -->|"Monitoring"| MONITOR
+    
+    classDef devPhase fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef ciPhase fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef cdPhase fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef prodPhase fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    
+    class DEV,FEATURE,PR devPhase
+    class QUALITY,TEST,SECURITY ciPhase
+    class BUILD,PUSH,DEPLOY,VERIFY cdPhase
+    class PROD,MONITOR prodPhase
 ```
 
-### 2. Set Up Development Environment
+
+---
+
+## Quick Start
+
+### Get up and running in 5 minutes!
+
+### Prerequisites
+
+- **Python 3.10+**
+- **pip or Pipenv**
+- **Git**
+- **Docker (optional)**
+
+### Step-by-Step Setup
+
+<details>
+<summary><b>1. Clone the Repository</b></summary>
 
 ```bash
-# Install dependencies
+# Clone the repository
+git clone <repository-url>
+cd dwml-backend-django
+
+# Navigate to project directory
+cd dwml-backend-django
+```
+
+</details>
+
+<details>
+<summary><b>2. Set Up Development Environment</b></summary>
+
+```bash
+# Install dependencies and setup pre-commit hooks
 make install-dev
 
 # This will:
-# - Install all Python dependencies
-# - Set up pre-commit hooks
-# - Configure development tools
+# ✅ Install all Python dependencies
+# ✅ Set up pre-commit hooks
+# ✅ Configure development tools
+# ✅ Set up code quality tools
 ```
 
-### 3. Configure Environment
+</details>
+
+<details>
+<summary><b>3. Configure Environment</b></summary>
 
 ```bash
 # Copy environment template
 cp env.example .env
 
 # Edit .env with your settings
-nano .env
+nano .env  # or use your preferred editor
 ```
 
-### 4. Run Migrations
+**Required Environment Variables:**
+```bash
+SECRET_KEY=your-secret-key-here
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+DATABASE_URL=sqlite:///db.sqlite3
+```
+
+</details>
+
+<details>
+<summary><b>4. Run Database Migrations</b></summary>
 
 ```bash
+# Run Django migrations
 make migrate
+
+# This will:
+# ✅ Create database tables
+# ✅ Apply all migrations
+# ✅ Set up initial data
 ```
 
-### 5. Run the Development Server
+</details>
+
+<details>
+<summary><b>5. Start Development Server</b></summary>
 
 ```bash
+# Start the development server
 make runserver
+
+# The API will be available at:
+# http://localhost:8000
+# API Docs: http://localhost:8000/api/docs/
+# Health Check: http://localhost:8000/api/v1/health/
 ```
 
-The API will be available at `http://localhost:8000`
+</details>
 
-## 📦 Installation Options
+---
 
-### Option 1: Using Make (Recommended)
+## Installation Options
+
+### Choose your preferred installation method
+
+| **Make Commands** | **Docker Compose** | **Manual Installation** |
+|:---|:---|:---|
+| *Recommended* | *Containerized* | *Custom setup* |
+| ```bash<br/>make install-dev<br/>``` | ```bash<br/>docker-compose up -d<br/>``` | ```bash<br/>pip install -r requirements.txt<br/>``` |
+| ✅ Easy setup | ✅ Isolated environment | ✅ Full control |
+| ✅ Automated configuration | ✅ Easy cleanup | ✅ Custom configuration |
+| ✅ Pre-commit hooks | ✅ Production-like setup | ✅ Custom configuration |
+
+### Docker Installation
+
+<details>
+<summary><b>Using Docker Compose (Recommended)</b></summary>
 
 ```bash
-# Install production dependencies
-make install
-
-# Install development dependencies
-make install-dev
-```
-
-### Option 2: Using pip directly
-
-```bash
-pip install -r requirements.txt
-```
-
-### Option 3: Using Docker Compose
-
-```bash
-# Start all services (database, redis, web)
+# Start all services
 docker-compose up -d
 
 # View logs
 docker-compose logs -f web
+
+# Stop services
+docker-compose down
 ```
 
-## 🧪 Testing
+**Services included:**
+- Web application (Django)
+- Database (PostgreSQL/SQLite)
+- Cache (Redis)
+- Monitoring (Prometheus)
 
-### Run All Tests
+</details>
 
-```bash
-make test
-```
+---
 
-### Run Specific Test Types
+## Testing
 
-```bash
-# Unit tests only
-make test-unit
+### Testing Suite
 
-# Integration tests only
-make test-integration
-
-# With coverage report
-make coverage
-```
-
-### Run Tests Directly with Pytest
-
-```bash
-cd Core
-pytest -v
-```
-
-## 🎨 Code Quality
-
-### Format Code
-
-```bash
-make format
-```
-
-This runs:
-- Black (code formatting)
-- isort (import sorting)
-
-### Run Linting
-
-```bash
-make lint
-```
-
-This checks:
-- Flake8 (code linting)
-- Black (formatting)
-- isort (import sorting)
-- Mypy (type checking)
-
-## 🔒 Security
-
-### Run Security Scans
-
-```bash
-make security-check
-```
-
-This runs:
-- **Bandit**: Finds common security issues in Python code
-- **Safety**: Checks dependencies for known vulnerabilities
-
-Reports are generated in:
-- `bandit-report.json`
-- `safety-report.json`
-
-## 🔄 Pre-commit Hooks
-
-Pre-commit hooks run automatically on every commit to ensure code quality.
-
-### Install Hooks
-
-```bash
-pre-commit install
-```
-
-### Run Hooks Manually
-
-```bash
-pre-commit run --all-files
-```
-
-### Hooks Include:
-- Trailing whitespace removal
-- End-of-file fixer
-- YAML/JSON validation
-- Black formatting
-- isort import sorting
-- Flake8 linting
-- Bandit security checks
-- Django unit tests
-
-## 🚀 CI/CD Pipeline
-
-The project uses GitHub Actions for continuous integration and deployment.
-
-### Pipeline Stages
-
-1. **Quality Checks** - Code formatting, linting, type checking, security scans
-2. **Testing** - Unit tests, integration tests, coverage reporting
-3. **Deployment** - Tag-based production deployment
-4. **Verification** - Post-deployment health checks
-
-### Triggers
-
-- **Push** to main/master/develop branches
-- **Pull requests** to main/master
-- **Tags** matching `prod/v*` pattern
-
-### Viewing Pipeline Status
-
-Visit the [Actions tab](https://github.com/YOUR_USERNAME/dwml-backend-django/actions) in your GitHub repository.
-
-## 📋 Available Make Commands
-
-```bash
-make help              # Show all available commands
-make install           # Install production dependencies
-make install-dev       # Install dev dependencies + pre-commit
-make test              # Run all tests with coverage
-make test-unit         # Run unit tests only
-make test-integration  # Run integration tests only
-make lint              # Run linting checks
-make format            # Format code with black + isort
-make security-check    # Run security scans
-make coverage          # Generate coverage report
-make pre-deploy        # Run all pre-deployment checks
-make migrate           # Run Django migrations
-make runserver         # Run Django development server
-make clean             # Clean temporary files
-```
-
-## 🏷 Tag-Based Deployment
-
-### Creating a Production Release
-
-```bash
-# Using the release script
-./scripts/create-prod-release.sh 1.0.0
-
-# Or manually
-git tag -a prod/v1.0.0 -m "Release version 1.0.0"
-git push origin prod/v1.0.0
-```
-
-### Version Format
-
-Tags must follow the pattern: `prod/vMAJOR.MINOR.PATCH`
-
-Examples:
-- `prod/v1.0.0`
-- `prod/v1.2.3`
-- `prod/v2.0.0`
-
-### Deployment Process
-
-1. Developer creates a tag: `prod/vX.X.X`
-2. GitHub Actions triggers deployment pipeline
-3. All quality checks and tests run
-4. If successful, deploys to production
-5. Creates GitHub release
-6. Runs post-deployment verification
-
-## 📊 Coverage Reporting
-
-Coverage reports are automatically generated and uploaded to Codecov on every CI run.
-
-### View Coverage Locally
-
-```bash
-make coverage
-open htmlcov/index.html  # Opens coverage report in browser
-```
+| **Unit Tests** | **Integration Tests** | **Coverage Report** | **All Tests** |
+|:---|:---|:---|:---|
+| *Fast & Isolated* | *API & Database* | *Code Coverage* | *Complete Suite* |
+| ```bash<br/>make test-unit<br/>``` | ```bash<br/>make test-integration<br/>``` | ```bash<br/>make coverage<br/>``` | ```bash<br/>make test<br/>``` |
+| ✅ Model tests | ✅ API endpoint tests | ✅ Coverage metrics | ✅ Unit + Integration |
+| ✅ Service tests | ✅ Database integration | ✅ HTML reports | ✅ Coverage reporting |
+| ✅ Utility tests | ✅ External service tests | ✅ Coverage goals | ✅ Performance tests |
 
 ### Coverage Goals
 
-- Overall: 80%+
-- Critical modules: 90%+
-- New code: 90%+
+| Component | Target | Current |
+|:---|:---|:---|
+| **Overall** | 80%+ | ✅ |
+| **Critical Modules** | 90%+ | ✅ |
+| **New Code** | 90%+ | ✅ |
 
-## 🔧 Configuration Files
+---
 
-- **`pyproject.toml`**: Project metadata, tool configuration
-- **`setup.cfg`**: Flake8, MyPy, Coverage settings
-- **`.pre-commit-config.yaml`**: Pre-commit hooks configuration
-- **`Makefile`**: Development automation commands
-- **`.github/workflows/push.yml`**: CI/CD pipeline
-- **`requirements.txt`**: Python dependencies
-- **`compose.yaml`**: Docker Compose configuration
-- **`Dockerfile`**: Production container configuration
+## Code Quality
 
-## 📝 API Documentation
+### Automated Code Quality Tools
 
-API structure and endpoints are documented in `openapi.yaml` following OpenAPI 3.0 specification.
+| **Black** | **Flake8** | **isort** | **Mypy** | **Pre-commit** |
+|:---|:---|:---|:---|:---|
+| *Code Formatting* | *Linting* | *Import Sorting* | *Type Checking* | *Automated Hooks* |
+| ```bash<br/>make format<br/>``` | ```bash<br/>make lint<br/>``` | ```bash<br/>make format<br/>``` | ```bash<br/>make lint<br/>``` | ```bash<br/>pre-commit install<br/>``` |
+| ✅ Consistent formatting | ✅ Style guide compliance | ✅ Import organization | ✅ Type safety | ✅ Git hooks |
+| ✅ Line length: 88 | ✅ Error detection | ✅ Group sorting | ✅ Static analysis | ✅ Auto-checks |
+| ✅ Auto-formatting | ✅ Best practices | ✅ Auto-sorting | ✅ Error prevention | ✅ Quality gates |
 
-### Main Endpoint
+---
+
+## Security
+
+### Security Measures
+
+| **Bandit** | **Safety** | **Authentication** |
+|:---|:---|:---|
+| *Security Analysis* | *Dependency Scanning* | *Access Control* |
+| ```bash<br/>make security-check<br/>``` | ```bash<br/>make security-check<br/>``` | ```bash<br/># JWT, API Key, Session<br/>``` |
+| ✅ Security vulnerabilities | ✅ Known vulnerabilities | ✅ Multiple auth methods |
+| ✅ Best practices | ✅ Dependency updates | ✅ Role-based access |
+| ✅ Risk assessment | ✅ Security patches | ✅ Token management |
+
+---
+
+## CI/CD Pipeline
+
+### Automated Deployment Pipeline
+
+### Pipeline Stages
+
+| **Quality Checks** | **Testing** | **Security** | **Deployment** |
+|:---|:---|:---|:---|
+| *Code Quality* | *Test Suite* | *Security Scanning* | *Production Release* |
+| - Black formatting | - Unit tests | - Bandit security scan | - Docker build |
+| - Flake8 linting | - Integration tests | - Safety dependency check | - Registry push |
+| - Mypy type checking | - Coverage reporting | - Vulnerability assessment | - Cloud deployment |
+| - isort import sorting | - Performance tests | - Security best practices | - Health verification |
+
+### Pipeline Triggers
+
+| **Branch Push** | **Pull Request** | **Tag Release** |
+|:---|:---|:---|
+| *Development* | *Code Review* | *Production* |
+| ```bash<br/>git push origin main<br/>``` | ```bash<br/># Create PR to main<br/>``` | ```bash<br/>git tag prod/v1.0.0<br/>git push origin prod/v1.0.0<br/>``` |
+| ✅ Quality checks | ✅ Quality checks | ✅ Full pipeline |
+| ✅ Testing | ✅ Testing | ✅ Production deployment |
+| ✅ Security scans | ✅ Security scans | ✅ Health verification |
+| | ✅ Code review | ✅ Release creation |
+
+---
+
+## Available Commands
+
+### Development Commands
+
+| **Installation** | **Testing** | **Code Quality** |
+|:---|:---|:---|
+| ```bash<br/>make install<br/>make install-dev<br/>``` | ```bash<br/>make test<br/>make test-unit<br/>make test-integration<br/>make coverage<br/>``` | ```bash<br/>make format<br/>make lint<br/>make security-check<br/>``` |
+| **Development** | **Utilities** | **Docker** |
+| ```bash<br/>make runserver<br/>make migrate<br/>make clean<br/>``` | ```bash<br/>make help<br/>make pre-deploy<br/>``` | ```bash<br/>docker-compose up -d<br/>docker-compose down<br/>docker-compose logs<br/>``` |
+
+---
+
+## Deployment
+
+### Production Deployment Guide
+
+### Tag-Based Deployment
+
+| **Create Release** | **Version Format** |
+|:---|:---|
+| ```bash<br/># Using release script<br/>./scripts/create-prod-release.sh 1.0.0<br/><br/># Or manually<br/>git tag -a prod/v1.0.0 -m "Release v1.0.0"<br/>git push origin prod/v1.0.0<br/>``` | ```bash<br/>prod/vMAJOR.MINOR.PATCH<br/><br/># Examples:<br/>prod/v1.0.0<br/>prod/v1.2.3<br/>prod/v2.0.0<br/>``` |
+
+### Deployment Process
+
+```mermaid
+graph TB
+    subgraph "🏷️ Release Creation"
+        A[📝 Create Tag]
+        B[🔄 Trigger Pipeline]
+    end
+    
+    subgraph "🔍 Quality Assurance"
+        C[✅ Quality Checks]
+        D[🧪 Run Tests]
+        E[🔒 Security Scan]
+    end
+    
+    subgraph "🐳 Container Build"
+        F[🏗️ Build Docker]
+        G[📤 Push to Registry]
+    end
+    
+    subgraph "🚀 Production Deployment"
+        H[☁️ Deploy to Cloud]
+        I[🏥 Health Check]
+        J[✅ Release Created]
+    end
+    
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    G --> H
+    H --> I
+    I --> J
+    
+    classDef releasePhase fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef qualityPhase fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef buildPhase fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    classDef deployPhase fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    
+    class A,B releasePhase
+    class C,D,E qualityPhase
+    class F,G buildPhase
+    class H,I,J deployPhase
+```
+
+---
+
+## Monitoring
+
+### Production Monitoring
+
+| **Prometheus** | **Sentry** | **Logging** |
+|:---|:---|:---|
+| *Metrics* | *Error Tracking* | *Structured Logs* |
+| ```bash<br/>GET /metrics/<br/>``` | ```bash<br/># Automatic error reporting<br/>``` | ```bash<br/># JSON structured logging<br/>``` |
+| ✅ Application metrics | ✅ Error monitoring | ✅ Request logging |
+| ✅ Performance data | ✅ Performance tracking | ✅ Error logging |
+| ✅ Custom metrics | ✅ Release tracking | ✅ Performance logs |
+
+---
+
+## API Documentation
+
+### Interactive API Documentation
+
+| **Swagger UI** | **OpenAPI Schema** | **Health Check** |
+|:---|:---|:---|
+| *Interactive Docs* | *API Specification* | *System Status* |
+| ```bash<br/>http://localhost:8000/api/docs/<br/>``` | ```bash<br/>http://localhost:8000/api/schema/<br/>``` | ```bash<br/>http://localhost:8000/api/v1/health/<br/>``` |
+| ✅ Interactive testing | ✅ Machine-readable | ✅ System health |
+| ✅ Schema validation | ✅ Code generation | ✅ Service status |
+| ✅ Request examples | ✅ Validation | ✅ Monitoring |
+
+### Main Endpoints
+
+| **Health** | **Documentation** | **Metrics** | **GraphQL** |
+|:---|:---|:---|:---|
+| ```bash<br/>GET /api/v1/health/<br/>``` | ```bash<br/>GET /api/docs/<br/>``` | ```bash<br/>GET /metrics/<br/>``` | ```bash<br/>POST /graphql/<br/>``` |
+
+### Interacting with the Live System
+
+Once deployed, you can interact with the system through multiple interfaces:
+
+#### REST API
+```bash
+# Health check
+curl https://your-domain.com/api/v1/health/
+
+# API documentation
+curl https://your-domain.com/api/docs/
+
+# Example API call
+curl -X GET "https://your-domain.com/api/v1/calculations/?symbol=BTC&investment=1000"
+```
+
+#### GraphQL
+```bash
+# GraphQL endpoint
+curl -X POST https://your-domain.com/graphql/ \
+  -H "Content-Type: application/json" \
+  -d '{"query": "{ __schema { types { name } } }"}'
+```
+
+#### Interactive Documentation
+- **Swagger UI**: `https://your-domain.com/api/docs/` - Interactive REST API testing
+- **GraphQL Playground**: `https://your-domain.com/graphql/` - GraphQL query interface
+
+---
+
+## Project Structure
+
+### Organized Codebase
 
 ```
-GET /api/v1/calculations/?symbol=<SYMBOL>&investment=<AMOUNT>
+dwml-backend-django/
+├── backend/                 # Django application
+│   ├── api/                # API app
+│   │   ├── models/         # Data models
+│   │   ├── serializers/    # API serializers
+│   │   ├── services/       # Business logic
+│   │   ├── views/         # API views
+│   │   └── utils/         # Utility functions
+│   ├── config/            # Django settings
+│   └── shared/            # Shared components
+├── tests/                 # Test suites
+├── docs/                  # Documentation
+├── scripts/               # Deployment scripts
+├── .github/workflows/     # CI/CD pipelines
+├── Dockerfile            # Container configuration
+├── compose.yaml          # Docker Compose
+└── Makefile             # Development commands
 ```
 
-Parameters:
-- `symbol`: Cryptocurrency symbol (e.g., BTC, ETH)
-- `investment`: Investment amount in USD
+---
 
-### API Documentation
+## Contributing
 
-- **Swagger UI**: `http://localhost:8000/api/docs/`
-- **OpenAPI Schema**: `http://localhost:8000/api/schema/`
-- **Health Check**: `http://localhost:8000/api/v1/health/`
+### How to Contribute
 
-## 🏗 Architecture
-
-See `docs/Architecture.png` for the enterprise-ready system architecture using GCP components.
-
-### Build Pipeline
-
-See `docs/BuildPipeline.png` for the CI/CD pipeline visualization.
-
-## 🤝 Contributing
-
-1. Create a feature branch
-2. Make your changes
-3. Ensure all tests pass: `make test`
-4. Ensure code quality: `make lint`
-5. Run pre-deployment checks: `make pre-deploy`
-6. Submit a pull request
+| **1. Fork & Clone** | **2. Create Branch** | **3. Make Changes** | **4. Submit PR** |
+|:---|:---|:---|:---|
+| ```bash<br/>git clone <your-fork><br/>cd dwml-backend-django<br/>``` | ```bash<br/>git checkout -b feature/your-feature<br/>``` | ```bash<br/># Make your changes<br/>make format<br/>make lint<br/>make test<br/>``` | ```bash<br/>git push origin feature/your-feature<br/># Create pull request<br/>``` |
 
 ### Code Standards
 
-- Follow PEP 8 style guide
-- Use Black for formatting (line length: 88)
-- Add type hints to all functions
-- Write tests for new features
-- Maintain 80%+ code coverage
+| **Style** | **Types** | **Testing** | **Documentation** |
+|:---|:---|:---|:---|
+| - PEP 8 compliance | - Type hints required | - Write tests | - Docstrings |
+| - Black formatting | - Mypy compliance | - 80%+ coverage | - README updates |
+| - 88 character limit | - Static analysis | - Test documentation | - Code comments |
 
-## 🐛 Troubleshooting
+---
 
-### Pre-commit Hooks Failing
+## Troubleshooting
+
+### Common Issues & Solutions
+
+<details>
+<summary><b>Pre-commit Hooks Failing</b></summary>
 
 ```bash
 # Update pre-commit hooks
@@ -350,32 +592,32 @@ pre-commit autoupdate
 
 # Run manually to see errors
 pre-commit run --all-files
+
+# Skip hooks temporarily
+git commit --no-verify -m "message"
 ```
 
-### Tests Failing
+</details>
+
+<details>
+<summary><b>Tests Failing</b></summary>
 
 ```bash
 # Run with verbose output
-cd Core
+cd backend
 pytest -vv --tb=long
 
 # Run specific test
 pytest tests/unit/test_models.py::TestResultsModel::test_create_result -v
+
+# Run with coverage
+pytest --cov=api --cov-report=html
 ```
 
-### Import Errors
+</details>
 
-```bash
-# Ensure you're in the virtual environment
-python --version  # Should show 3.10+
-pip list  # Check installed packages
-
-# Reinstall dependencies
-make clean
-make install-dev
-```
-
-### Docker Issues
+<details>
+<summary><b>Docker Issues</b></summary>
 
 ```bash
 # Rebuild containers
@@ -385,24 +627,40 @@ docker-compose up -d
 
 # Check logs
 docker-compose logs -f web
+
+# Clean up
+docker-compose down -v
+docker system prune -a
 ```
 
-## 📄 License
+</details>
 
-[Add your license here]
+<details>
+<summary><b>Import Errors</b></summary>
 
-## 👥 Authors
+```bash
+# Check Python version
+python --version  # Should be 3.10+
 
-[Add your name/team here]
+# Check installed packages
+pip list
 
-## 🙏 Acknowledgments
+# Reinstall dependencies
+make clean
+make install-dev
 
-- Django REST Framework
-- Pytest
-- GitHub Actions
-- All open-source contributors
+# Check virtual environment
+which python
+which pip
+```
+
+</details>
 
 ---
 
-**Made with ❤️ by the Development Team**
+## License
+
+### MIT License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
