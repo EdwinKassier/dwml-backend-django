@@ -43,6 +43,10 @@ ALLOWED_HOSTS = env("ALLOWED_HOSTS")
 CORS_ALLOWED_ORIGINS = env("CORS_ALLOWED_ORIGINS", default=[])
 CORS_ALLOW_CREDENTIALS = True
 
+# Security settings - disable HTTPS redirects for tests
+SECURE_SSL_REDIRECT = False
+SECURE_PROXY_SSL_HEADER = None
+
 
 # Application definition
 
