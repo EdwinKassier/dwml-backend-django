@@ -216,40 +216,21 @@ SPECTACULAR_SETTINGS = {
     "SERVE_INCLUDE_SCHEMA": False,
 }
 
-# Caching
-# Use Redis if available, fallback to local memory cache for tests
-try:
-    import redis
-    redis_client = redis.Redis.from_url(env("REDIS_URL", default="redis://localhost:6379/1"))
-    redis_client.ping()  # Test connection
-    CACHES = {
-        "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": env("REDIS_URL", default="redis://localhost:6379/1"),
-            "OPTIONS": {
-                "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            },
-            "KEY_PREFIX": "app",
-            "TIMEOUT": 300,
-        }
+# Caching - Use local memory cache only
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-snowflake",
+        "OPTIONS": {
+            "MAX_ENTRIES": 1000,
+        },
+        "KEY_PREFIX": "app",
+        "TIMEOUT": 300,
     }
-except (ImportError, redis.ConnectionError, Exception):
-    # Fallback to local memory cache for tests
-    CACHES = {
-        "default": {
-            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-            "LOCATION": "unique-snowflake",
-            "OPTIONS": {
-                "MAX_ENTRIES": 1000,
-            },
-            "KEY_PREFIX": "app",
-            "TIMEOUT": 300,
-        }
-    }
+}
 
-# Session configuration
-SESSION_ENGINE = "django.contrib.sessions.backends.cache"
-SESSION_CACHE_ALIAS = "default"
+# Session configuration - Use database sessions
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
 
 # Logging configuration
 LOGGING = {
