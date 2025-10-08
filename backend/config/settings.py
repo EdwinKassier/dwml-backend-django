@@ -23,22 +23,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Initialize environment variables
 env = environ.Env(
     DEBUG=(bool, False),
-    SECRET_KEY=(str, ""),
-    ALLOWED_HOSTS=(list, []),
+    SECRET_KEY=(str, "django-insecure-fallback-key-for-deployment"),
+    ALLOWED_HOSTS=(list, ["*"]),
     DATABASE_URL=(str, "sqlite:///db.sqlite3"),
     REDIS_URL=(str, "redis://localhost:6379/1"),
     SENTRY_DSN=(str, ""),
-    ENVIRONMENT=(str, "development"),
+    ENVIRONMENT=(str, "production"),
 )
 
-# Read .env file
-environ.Env.read_env(BASE_DIR.parent / ".env")
+# Read .env file (optional - won't fail if file doesn't exist)
+env_file = BASE_DIR.parent / ".env"
+if env_file.exists():
+    environ.Env.read_env(env_file)
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("SECRET_KEY", default="test-secret-key-for-ci-only-not-for-production")
+SECRET_KEY = env("SECRET_KEY", default="django-insecure-fallback-key-for-deployment")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env("DEBUG", default=True)
+DEBUG = env("DEBUG", default=False)
 
 ALLOWED_HOSTS = env("ALLOWED_HOSTS", default=["*"])
 CORS_ALLOWED_ORIGINS = env("CORS_ALLOWED_ORIGINS", default=[])
@@ -280,14 +282,15 @@ LOGGING = {
 }
 
 # Sentry configuration
-if env("SENTRY_DSN") and not DEBUG:
+SENTRY_DSN = env("SENTRY_DSN", default="")
+if SENTRY_DSN and not DEBUG:
     import sentry_sdk
     from sentry_sdk.integrations.django import DjangoIntegration
 
     sentry_sdk.init(
-        dsn=env("SENTRY_DSN"),
+        dsn=SENTRY_DSN,
         integrations=[DjangoIntegration()],
-        environment=env("ENVIRONMENT"),
+        environment=env("ENVIRONMENT", default="production"),
         traces_sample_rate=0.1,
         send_default_pii=False,
     )
