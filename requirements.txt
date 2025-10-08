@@ -6,9 +6,8 @@ whitenoise==6.6.0
 gunicorn==21.2.0
 psycopg2-binary==2.9.9
 python-decouple==3.8
-django-strawberry-graphql==0.4.0
-strawberry-graphql-django==0.6.0
-strawberry-graphql[debug-server]==0.215.0
+strawberry-graphql==0.283.2
+strawberry-graphql-django==0.65.1
 python-json-logger==2.0.7
 pytest==8.4.2
 pytest-django==4.11.1
