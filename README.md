@@ -2,7 +2,7 @@
 
 <img src="https://www.edwinkassier.com/Assets/Monogram.png" alt="Ashes Project Monogram" width="80" height="80">
 
-# 🚀 Ashes Project Django REST & GraphQL API Boilerplate
+# Ashes Project Django REST & GraphQL API Boilerplate
 
 <div align="center">
 
