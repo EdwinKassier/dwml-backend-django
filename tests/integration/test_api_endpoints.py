@@ -84,16 +84,25 @@ class TestAPIEndpoints:
         """Test results list endpoint."""
         response = self.client.get('/api/v1/results/')
         assert response.status_code == 200
-        assert isinstance(response.json(), list)
+        data = response.json()
+        assert isinstance(data, dict)
+        assert 'results' in data
+        assert isinstance(data['results'], list)
 
     def test_opening_averages_list_endpoint(self):
         """Test opening averages list endpoint."""
         response = self.client.get('/api/v1/opening-averages/')
         assert response.status_code == 200
-        assert isinstance(response.json(), list)
+        data = response.json()
+        assert isinstance(data, dict)
+        assert 'results' in data
+        assert isinstance(data['results'], list)
 
     def test_logs_list_endpoint(self):
         """Test logs list endpoint."""
         response = self.client.get('/api/v1/logs/')
         assert response.status_code == 200
-        assert isinstance(response.json(), list)
+        data = response.json()
+        assert isinstance(data, dict)
+        assert 'results' in data
+        assert isinstance(data['results'], list)

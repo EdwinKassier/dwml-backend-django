@@ -13,8 +13,7 @@ class PortfolioService(BaseService):
 
     def __init__(self):
         super().__init__()
-        self.data_collector = DataCollector()
-        # DataCache will be initialized when needed with specific parameters
+        # DataCollector and DataCache will be initialized when needed with specific parameters
 
     def calculate_portfolio_value(
         self, symbol: str, investment: Decimal
@@ -34,8 +33,11 @@ class PortfolioService(BaseService):
                 f"Calculating portfolio value for {symbol} with investment ${investment}"
             )
 
+            # Initialize DataCollector with required parameters
+            data_collector = DataCollector(symbol, investment)
+            
             # Get market data
-            market_data = self.data_collector.get_crypto_data(symbol)
+            market_data = data_collector.get_crypto_data(symbol)
             if not market_data:
                 return self.handle_error(
                     Exception(f"No market data found for {symbol}"),
