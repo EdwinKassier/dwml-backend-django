@@ -1,21 +1,25 @@
 """Portfolio-related views for cryptocurrency calculations."""
 
-from django.http import JsonResponse
-from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.response import Response
-from rest_framework.parsers import JSONParser
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from rest_framework import serializers
-from api.models.portfolio import PortfolioResult, PortfolioLog
-from api.models.portfolio import PortfolioResultSerializer, PortfolioLogSerializer
-from api.serializers.portfolio import CalculationRequestSerializer
-from api.services.portfolio_service import PortfolioService
+import logging
+
+from api.models.portfolio import (
+    PortfolioLog,
+    PortfolioLogSerializer,
+    PortfolioResult,
+    PortfolioResultSerializer,
+)
 from api.pagination import StandardResultsSetPagination
 from api.permissions import IsAdminOrReadOnly
+from api.serializers.portfolio import CalculationRequestSerializer
+from api.services.portfolio_service import PortfolioService
 from api.validators import CryptocurrencySymbolValidator, InvestmentAmountValidator
 from django.core.paginator import Paginator
-import logging
+from django.http import JsonResponse
+from rest_framework import serializers, status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.parsers import JSONParser
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.response import Response
 
 logger = logging.getLogger(__name__)
 

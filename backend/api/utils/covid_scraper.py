@@ -1,22 +1,22 @@
-import requests
-import pandas as pd
-from bs4 import BeautifulSoup
-import re
 import ast
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn import preprocessing, svm
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
+import re
 from datetime import datetime, timedelta
-from sklearn.ensemble import AdaBoostRegressor
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import requests
+import seaborn as sns
+from bs4 import BeautifulSoup
+from sklearn import preprocessing, svm
 from sklearn.datasets import make_regression
+from sklearn.ensemble import AdaBoostRegressor
+from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import train_test_split
 
 
 class CovidScraper:
-
     def __init__(self, country, date, apiCall):
         self.country = country
         self.target_date = date
@@ -26,7 +26,6 @@ class CovidScraper:
         self.predicted_data = None
 
     def driver_logic(self):
-
         self.get_raw_data()
         self.train_model()
         self.predict()
@@ -37,12 +36,11 @@ class CovidScraper:
 
     # Extract
     def get_raw_data(self):
-
         url = f"https://www.worldometers.info/coronavirus/country/{self.country}/"
         headers = {
             "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Mobile Safari/537.36"
         }
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=30)
 
         soup = BeautifulSoup(response.text, "html.parser")
         scripts = soup.find_all("script")
@@ -96,11 +94,9 @@ class CovidScraper:
 
     # Learn
     def train_model(self):
-
         df = self.clean_data
 
         try:
-
             # Convert date to float for processing
             df["Date"] = df["Date"].astype("int64").astype(float)
 
@@ -118,7 +114,6 @@ class CovidScraper:
 
     # Predict
     def predict(self):
-
         df = self.clean_data
 
         # Number of future dates to generate
@@ -164,7 +159,6 @@ class CovidScraper:
         self.predicted_data = result
 
     def chart(self):
-
         target_data = self.predicted_data
 
         plt.figure(figsize=(12, 6))  # Increase figure size

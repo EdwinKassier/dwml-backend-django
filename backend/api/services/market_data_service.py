@@ -1,9 +1,10 @@
 """Market data service for cryptocurrency market information."""
 
-from typing import Dict, Any
-from .base_service import BaseService
-from ..utils.data_collector import DataCollector
+from typing import Any, Dict
+
 from ..utils.data_cache import DataCache
+from ..utils.data_collector import DataCollector
+from .base_service import BaseService
 
 
 class MarketDataService(BaseService):
@@ -11,8 +12,8 @@ class MarketDataService(BaseService):
 
     def __init__(self):
         super().__init__()
-        self.data_collector = DataCollector()
-        # DataCache will be initialized when needed with specific parameters
+        # Don't initialize DataCollector here since it requires parameters
+        # Initialize it when needed in each method
 
     def get_current_price(self, symbol: str) -> Dict[str, Any]:
         """
@@ -37,7 +38,10 @@ class MarketDataService(BaseService):
             #     })
 
             # Fetch from external API
-            market_data = self.data_collector.get_crypto_data(symbol)
+            data_collector = DataCollector(
+                symbol, 0
+            )  # Use 0 for investment when just checking price
+            market_data = data_collector.get_crypto_data(symbol)
             if not market_data:
                 return self.handle_error(
                     Exception(f"No market data found for {symbol}"), "get_current_price"

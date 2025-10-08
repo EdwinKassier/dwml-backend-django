@@ -1,13 +1,13 @@
 """This module manages the main logic for the api"""
 
+import traceback
 from datetime import datetime, timedelta
-import requests
+
 import pandas as pd
+import requests
 
 # Import datacache class as a helper class
 from .data_cache import DataCache
-
-import traceback
 
 # Were I to use an api that requires an api key, this is how we would add it
 # headers_dict =
@@ -66,11 +66,7 @@ class DataCollector:
         print(f"Create result dict average start price : {average_start_price}")
 
         # Number of coins purchased at the beginning
-        number_of_coins = (
-            float(self.investment) / average_start_price["AVERAGE"]
-            if "AVERAGE" in average_start_price
-            else average_start_price
-        )
+        number_of_coins = float(self.investment) / float(average_start_price)
 
         # What is our profit if we sold at the average price of the last month
         profit = round(((number_of_coins * average_end_price) - self.investment), 2)
@@ -101,7 +97,8 @@ class DataCollector:
         try:
             check_symbol = (
                 requests.get(
-                    f"https://api.kraken.com/0/public/OHLC?pair={self.coin_symbol}USD&interval=21600&since=1548111600"
+                    f"https://api.kraken.com/0/public/OHLC?pair={self.coin_symbol}USD&interval=21600&since=1548111600",
+                    timeout=30,
                 )
             ).json()
 
@@ -121,7 +118,6 @@ class DataCollector:
         """Driver logic to run all business logic"""
 
         try:
-
             dataCache = DataCache(self.coin_symbol, self.investment)
 
             # Irrelevant of what the user gave, we insert the query into the logging table
@@ -154,7 +150,8 @@ class DataCollector:
                 print("We haven't seen this symbol before")
 
                 data_raw_start = requests.get(
-                    f"https://api.kraken.com/0/public/OHLC?pair={self.coin_symbol}USD&interval=21600&since=1548111600"
+                    f"https://api.kraken.com/0/public/OHLC?pair={self.coin_symbol}USD&interval=21600&since=1548111600",
+                    timeout=30,
                 )
 
                 # create pandas dataframe for the price data at the coins inception
@@ -177,7 +174,8 @@ class DataCollector:
 
             # generating request urls to REST api
             data_raw_current = requests.get(
-                f"https://api.kraken.com/0/public/OHLC?pair={self.coin_symbol}USD&interval=21600&since=1548111600"
+                f"https://api.kraken.com/0/public/OHLC?pair={self.coin_symbol}USD&interval=21600&since=1548111600",
+                timeout=30,
             )
 
             # create pandas dataframe for the price data at the moment
@@ -203,3 +201,26 @@ class DataCollector:
             return final_result
         except Exception as exc:
             print(traceback.format_exc())
+
+    def get_crypto_data(self, symbol: str) -> dict:
+        """
+        Get cryptocurrency data for a given symbol.
+        Returns dict with current_price and other market data.
+        """
+        try:
+            # Use the existing driver_logic or create simplified version
+            result = self.driver_logic()
+            if result == "Symbol doesn't exist":
+                return None
+
+            # Extract current price from result
+            # This is a simplified version - you'd need to adapt based on actual needs
+            return {
+                "current_price": result.get("PROFIT", 0) / result.get("NUMBERCOINS", 1)
+                if result.get("NUMBERCOINS")
+                else 0,
+                "data": result,
+            }
+        except Exception as e:
+            print(f"Error getting crypto data: {e}")
+            return None

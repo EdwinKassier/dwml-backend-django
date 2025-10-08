@@ -1,10 +1,11 @@
 """Analytics views for cryptocurrency analysis and predictions."""
 
+import logging
+
+from api.services.analytics_service import AnalyticsService
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from api.services.analytics_service import AnalyticsService
-import logging
 
 logger = logging.getLogger(__name__)
 

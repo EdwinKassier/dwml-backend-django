@@ -1,9 +1,10 @@
 """Portfolio-related serializers."""
 
-from rest_framework import serializers
-from api.models.portfolio import PortfolioResult, PortfolioLog
-from decimal import Decimal
 import re
+from decimal import Decimal
+
+from api.models.portfolio import PortfolioLog, PortfolioResult
+from rest_framework import serializers
 
 
 class CalculationRequestSerializer(serializers.Serializer):
@@ -18,8 +19,8 @@ class CalculationRequestSerializer(serializers.Serializer):
     investment = serializers.DecimalField(
         max_digits=12,
         decimal_places=2,
-        min_value=Decimal('0.01'),
-        max_value=Decimal('1000000.00'),
+        min_value=Decimal("0.01"),
+        max_value=Decimal("1000000.00"),
         required=True,
         help_text="Investment amount in USD",
     )

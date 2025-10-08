@@ -1,26 +1,23 @@
 import sqlite3
 from datetime import datetime, timedelta
-from dateutil import parser
 
-from api.models.portfolio import Results, LOGGING
-from api.models.portfolio import ResultsSerializer, LOGGINGSerializer
-from api.models.market_data import OpeningAverage
-from api.models.market_data import OpeningAverageSerializer
+from api.models.market_data import OpeningAverage, OpeningAverageSerializer
+from api.models.portfolio import LOGGING, LOGGINGSerializer, Results, ResultsSerializer
+from dateutil import parser
 
 
 class DataCache:
-
     def __init__(self, coin_symbol, investment):
         self.coin_symbol = str(coin_symbol)
         self.investment = int(investment)
+        self.connection = None
 
     # Check if there exists a freshly cached result for the current query
     def check_if_valid_final_result_exists(self):
-
         existing_result_raw = (
-            Results.objects.get(SYMBOL=self.coin_symbol, INVESTMENT=self.investment)
+            Results.objects.get(symbol=self.coin_symbol, investment=self.investment)
             if Results.objects.filter(
-                SYMBOL=self.coin_symbol, INVESTMENT=self.investment
+                symbol=self.coin_symbol, investment=self.investment
             ).exists()
             else ""
         )
@@ -38,17 +35,15 @@ class DataCache:
 
     # Get cached result for the current query
     def get_valid_final_result(self):
-
         existing_result_raw = (
-            Results.objects.get(SYMBOL=self.coin_symbol, INVESTMENT=self.investment)
+            Results.objects.get(symbol=self.coin_symbol, investment=self.investment)
             if Results.objects.filter(
-                SYMBOL=self.coin_symbol, INVESTMENT=self.investment
+                symbol=self.coin_symbol, investment=self.investment
             ).exists()
             else ""
         )
 
         if existing_result_raw != "":
-
             serializer = ResultsSerializer(existing_result_raw, many=False)
 
             print(serializer.data)
@@ -59,14 +54,13 @@ class DataCache:
 
     # Check if we have already stored a cached version of the opening price data for the symbol
     def check_if_historical_cache_exists(self):
-
         existing_result_raw = (
-            OpeningAverage.objects.get(SYMBOL=self.coin_symbol)
-            if OpeningAverage.objects.filter(SYMBOL=self.coin_symbol).exists()
+            OpeningAverage.objects.get(symbol=self.coin_symbol)
+            if OpeningAverage.objects.filter(symbol=self.coin_symbol).exists()
             else ""
         )
 
-        query = f"SELECT * from OpeningAverage WHERE SYMBOL = '{self.coin_symbol}'"
+        query = "SELECT * from OpeningAverage WHERE symbol = ?"
 
         if existing_result_raw != "":
             print(f"There exists a historical cache for this query {query}")
@@ -77,14 +71,13 @@ class DataCache:
 
     # Get cached version of the opening price data for the symbol
     def get_historical_cache(self):
-
         existing_result_raw = (
-            OpeningAverage.objects.get(SYMBOL=self.coin_symbol)
-            if OpeningAverage.objects.filter(SYMBOL=self.coin_symbol).exists()
+            OpeningAverage.objects.get(symbol=self.coin_symbol)
+            if OpeningAverage.objects.filter(symbol=self.coin_symbol).exists()
             else ""
         )
 
-        query = f"SELECT * from OpeningAverage WHERE SYMBOL = '{self.coin_symbol}'"
+        query = "SELECT * from OpeningAverage WHERE symbol = ?"
 
         if existing_result_raw != "":
             serializer = OpeningAverageSerializer(existing_result_raw, many=False)
@@ -96,18 +89,16 @@ class DataCache:
 
     # Insert current query into the logging table
     def insert_into_logging(self):
-
         combined_results = {
             "SYMBOL": self.coin_symbol,
             "INVESTMENT": self.investment,
             "GENERATIONDATE": datetime.now().isoformat(),
         }
         try:
-
             logging_item = LOGGING(
-                SYMBOL=self.coin_symbol,
-                INVESTMENT=self.investment,
-                GENERATIONDATE=datetime.now().isoformat(),
+                symbol=self.coin_symbol,
+                message=f"Query for {self.coin_symbol} with investment {self.investment}",
+                level="INFO",
             )
 
             logging_item.save()
@@ -116,18 +107,17 @@ class DataCache:
 
     # Insert final result from a query into the results table
     def insert_into_result(self, result):
-
         QUERY = f"{self.coin_symbol}-{self.investment}"
 
         try:
             result_item = Results(
-                NUMBERCOINS=result["NUMBERCOINS"],
-                PROFIT=result["PROFIT"],
-                GROWTHFACTOR=result["GROWTHFACTOR"],
-                LAMBOS=result["LAMBOS"],
-                INVESTMENT=self.investment,
-                SYMBOL=self.coin_symbol,
-                GENERATIONDATE=datetime.now().isoformat(),
+                query=QUERY,
+                number_coins=result["NUMBERCOINS"],
+                profit=result["PROFIT"],
+                growth_factor=result["GROWTHFACTOR"],
+                lambos=result["LAMBOS"],
+                investment=self.investment,
+                symbol=self.coin_symbol,
             )
 
             result_item.save()
@@ -136,14 +126,12 @@ class DataCache:
 
     # Insert final result from data collector into the db
     def insert_into_opening_average(self, result):
-
         combined_results = {**result, "SYMBOL": self.coin_symbol}
 
         try:
             opening_average_item = OpeningAverage(
-                SYMBOL=self.coin_symbol,
-                AVERAGE=result["AVERAGE"],
-                GENERATIONDATE=datetime.now().isoformat(),
+                symbol=self.coin_symbol,
+                average=result["AVERAGE"],
             )
 
             opening_average_item.save()
@@ -157,7 +145,8 @@ class DataCache:
 
         # get the count of tables with the given table name
         cur.execute(
-            f""" SELECT count(name) FROM sqlite_master WHERE type='table' AND name='{table_name}' """
+            """ SELECT count(name) FROM sqlite_master WHERE type='table' AND name=? """,
+            (table_name,),
         )
 
         if cur.fetchone()[0] == 1:

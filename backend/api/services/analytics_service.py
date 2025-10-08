@@ -1,9 +1,10 @@
 """Analytics service for cryptocurrency analysis and predictions."""
 
-from typing import Dict, Any
-from .base_service import BaseService
+from typing import Any, Dict
+
 from ..utils.covid_scraper import CovidScraper
 from ..utils.graph_creator import GraphCreator
+from .base_service import BaseService
 
 
 class AnalyticsService(BaseService):
@@ -70,7 +71,9 @@ class AnalyticsService(BaseService):
                 "market_impact": (
                     "high"
                     if severity_score > 0.5
-                    else "medium" if severity_score > 0.2 else "low"
+                    else "medium"
+                    if severity_score > 0.2
+                    else "low"
                 ),
                 "recommendation": self._get_market_recommendation(severity_score),
                 "confidence": min(severity_score * 100, 95),  # Confidence percentage

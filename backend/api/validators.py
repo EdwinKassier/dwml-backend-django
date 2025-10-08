@@ -2,8 +2,9 @@
 
 import re
 from decimal import Decimal
-from rest_framework import serializers
+
 from django.core.exceptions import ValidationError
+from rest_framework import serializers
 
 
 class CryptocurrencySymbolValidator:

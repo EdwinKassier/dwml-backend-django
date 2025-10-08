@@ -1,7 +1,7 @@
 """Base service class for common functionality."""
 
 import logging
-from typing import Dict, Any
+from typing import Any, Dict
 
 
 class BaseService:

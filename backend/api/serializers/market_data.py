@@ -1,7 +1,7 @@
 """Market data serializers."""
 
-from rest_framework import serializers
 from api.models.market_data import OpeningAverage
+from rest_framework import serializers
 
 
 class MarketPriceSerializer(serializers.Serializer):

@@ -1,7 +1,8 @@
 """URL configuration for the API app with versioning."""
 
-from django.urls import path, include
-from .views import portfolio, market_data, analytics, health
+from django.urls import include, path
+
+from .views import analytics, health, market_data, portfolio
 
 app_name = "api"
 

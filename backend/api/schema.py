@@ -1,8 +1,9 @@
 import asyncio
-
-import strawberry
 import json
 import traceback
+
+import strawberry
+
 from .utils import data_collector, graph_creator
 
 

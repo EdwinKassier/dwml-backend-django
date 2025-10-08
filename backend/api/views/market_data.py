@@ -1,13 +1,14 @@
 """Market data views for cryptocurrency market information."""
 
+import logging
+
+from api.models.market_data import OpeningAverage, OpeningAverageSerializer
+from api.pagination import StandardResultsSetPagination
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import AllowAny
-from api.models.market_data import OpeningAverage
-from api.models.market_data import OpeningAverageSerializer
-import logging
+from rest_framework.response import Response
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +20,15 @@ def opening_average_list(request):
     List all opening averages, or create a new opening average.
     """
     if request.method == "GET":
-        averages = OpeningAverage.objects.all()
+        # Add pagination
+        paginator = StandardResultsSetPagination()
+        averages = OpeningAverage.objects.all().order_by("-generation_date")
+        page = paginator.paginate_queryset(averages, request)
+
+        if page is not None:
+            serializer = OpeningAverageSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
         serializer = OpeningAverageSerializer(averages, many=True)
         return Response(serializer.data)
 
@@ -39,7 +48,7 @@ def opening_average_detail(request, symbol):
     Retrieve, update or delete an opening average.
     """
     try:
-        average = OpeningAverage.objects.get(SYMBOL=symbol)
+        average = OpeningAverage.objects.get(symbol=symbol)
     except OpeningAverage.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
