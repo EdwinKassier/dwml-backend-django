@@ -258,37 +258,15 @@ jobs:
             --member="allUsers" \
             --role="roles/run.invoker" || echo "IAM policy may already be set"
 
-      - name: Verify deployment
+      - name: Get Service URL
+        id: get_service_url
         run: |
           SERVICE_URL=$(gcloud run services describe ${{ steps.extract_version.outputs.SERVICE_NAME }} --region=${{ env.RUN_REGION }} --format="value(status.url)")
+          echo "SERVICE_URL=$SERVICE_URL" >> $GITHUB_OUTPUT
           echo "Service URL: $SERVICE_URL"
 
-          # Wait a moment for the service to be ready
-          echo "Waiting for service to be ready..."
-          sleep 10
-
-          # Test Django-specific endpoints
-          echo "Testing /api/v1/health/ endpoint..."
-          curl -v "$SERVICE_URL/api/v1/health/" || echo "Health endpoint failed"
-
-          echo "Testing /api/docs/ endpoint..."
-          curl -v "$SERVICE_URL/api/docs/" || echo "API docs endpoint failed"
-
-          echo "Testing /metrics/ endpoint..."
-          curl -v "$SERVICE_URL/metrics/" || echo "Metrics endpoint failed"
-
-          # Try the health endpoint again with more verbose output
-          echo "Final health check..."
-          if curl -f "$SERVICE_URL/api/v1/health/"; then
-            echo "✅ Django deployment verified successfully"
-          else
-            echo "❌ Health check failed, but deployment may still be working"
-            echo "Service URL: $SERVICE_URL"
-            echo "Please check the service manually"
-          fi
-
       - name: Create GitHub Release
-        uses: actions/create-release@v1
+        uses: actions/create-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -308,6 +286,7 @@ jobs:
             - **Region**: ${{ env.RUN_REGION }}
             - **Environment**: Production
             - **Framework**: Django 5.2.7
+            - **Service URL**: ${{ steps.get_service_url.outputs.SERVICE_URL }}
 
             ### Quality Checks Passed
             - ✅ Code formatting (Black)
@@ -326,29 +305,40 @@ jobs:
           echo "✅✅✅ Django deployment successful! ✅✅✅"
           echo "Version ${{ steps.extract_version.outputs.VERSION }} is now live!"
 
-  # Job 4: Post-Deployment Verification (only runs on tagged releases)
-  verify-deployment:
-    name: Verify Deployment
-    runs-on: ubuntu-latest
-    needs: deploy
-    if: startsWith(github.ref, 'refs/tags/prod/v')
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Wait for deployment to stabilize
-        run: sleep 30
-
-      - name: Django Health Check
+      - name: Comprehensive Deployment Verification
         run: |
-          echo "🏥 Running Django health checks..."
-          echo "Add your Django-specific health check commands here:"
-          echo "  - Check /api/v1/health/ endpoint"
-          echo "  - Verify database connectivity"
-          echo "  - Check Django admin interface"
-          echo "  - Verify API documentation"
+          echo "🏥 Running comprehensive Django health checks..."
 
-      - name: Verification Success
-        run: |
-          echo "✅ Django deployment verification passed!"
+          # Wait for service to be fully ready
+          echo "Waiting for service to stabilize..."
+          sleep 15
+
+          SERVICE_URL="${{ steps.get_service_url.outputs.SERVICE_URL }}"
+          echo "Testing service at: $SERVICE_URL"
+
+          # Test Django health endpoint
+          echo "Testing /api/v1/health/ endpoint..."
+          if curl -f -s "$SERVICE_URL/api/v1/health/" > /dev/null; then
+            echo "✅ Health endpoint is responding"
+          else
+            echo "❌ Health endpoint failed"
+            exit 1
+          fi
+
+          # Test API documentation endpoint
+          echo "Testing /api/docs/ endpoint..."
+          if curl -f -s "$SERVICE_URL/api/docs/" > /dev/null; then
+            echo "✅ API docs endpoint is responding"
+          else
+            echo "⚠️ API docs endpoint not accessible (may be expected)"
+          fi
+
+          # Test metrics endpoint
+          echo "Testing /metrics/ endpoint..."
+          if curl -f -s "$SERVICE_URL/metrics/" > /dev/null; then
+            echo "✅ Metrics endpoint is responding"
+          else
+            echo "⚠️ Metrics endpoint not accessible (may be expected)"
+          fi
+
+          echo "✅ All critical endpoints verified successfully!"
