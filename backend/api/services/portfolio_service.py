@@ -1,11 +1,12 @@
 """Portfolio service for cryptocurrency portfolio calculations."""
 
-from typing import Dict, Any
-from decimal import Decimal
-from .base_service import BaseService
-from ..utils.data_collector import DataCollector
-from ..utils.data_cache import DataCache
 import logging
+from decimal import Decimal
+from typing import Any, Dict
+
+from ..utils.data_cache import DataCache
+from ..utils.data_collector import DataCollector
+from .base_service import BaseService
 
 
 class PortfolioService(BaseService):
@@ -35,7 +36,7 @@ class PortfolioService(BaseService):
 
             # Initialize DataCollector with required parameters
             data_collector = DataCollector(symbol, investment)
-            
+
             # Get market data
             market_data = data_collector.get_crypto_data(symbol)
             if not market_data:
