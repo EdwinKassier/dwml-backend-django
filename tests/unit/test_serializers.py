@@ -1,6 +1,6 @@
 """Unit tests for API serializers."""
 import pytest
-from api.serializers.portfolio import CalculationRequestSerializer
+from domain.serializers import CalculationRequestSerializer
 from rest_framework import serializers
 
 
@@ -14,7 +14,7 @@ class TestCalculationRequestSerializer:
         serializer = CalculationRequestSerializer(data=data)
         assert serializer.is_valid()
         assert serializer.validated_data["symbol"] == "BTC"
-        assert serializer.validated_data["investment"] == 1000.50
+        assert float(serializer.validated_data["investment"]) == 1000.50
 
     def test_symbol_validation(self):
         """Test symbol field validation."""

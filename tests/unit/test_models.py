@@ -1,8 +1,7 @@
 """Unit tests for Django models."""
 import pytest
-from api.models.market_data import OpeningAverage
-from api.models.portfolio import PortfolioLog, PortfolioResult
 from django.test import TestCase
+from domain.models import OpeningAverage, PortfolioLog, PortfolioResult
 
 
 @pytest.mark.django_db
@@ -13,7 +12,6 @@ class TestPortfolioResultModel:
     def test_create_result(self):
         """Test creating a PortfolioResult instance."""
         result = PortfolioResult.objects.create(
-            query="BTC",
             number_coins=1.5,
             profit=50000.0,
             growth_factor=2.5,
@@ -29,7 +27,6 @@ class TestPortfolioResultModel:
     def test_result_string_fields(self):
         """Test string field constraints."""
         result = PortfolioResult.objects.create(
-            query="ETH",
             number_coins=10.0,
             profit=5000.0,
             growth_factor=1.5,
@@ -37,8 +34,8 @@ class TestPortfolioResultModel:
             investment=1000.0,
             symbol="ETH",
         )
-        assert len(result.symbol) <= 100
-        assert len(result.query) <= 100
+        assert len(result.symbol) <= 10
+        assert result.symbol == "ETH"
 
 
 @pytest.mark.django_db
@@ -51,7 +48,7 @@ class TestOpeningAverageModel:
         avg = OpeningAverage.objects.create(symbol="BTC", average=45000.0)
         assert avg.symbol == "BTC"
         assert avg.average == 45000.0
-        assert avg.generation_date is not None
+        assert avg.created_at is not None
 
 
 @pytest.mark.django_db
@@ -62,9 +59,9 @@ class TestPortfolioLogModel:
     def test_create_logging_entry(self):
         """Test creating a PortfolioLog instance."""
         log = PortfolioLog.objects.create(
-            symbol="ETH", message="Portfolio calculation completed", level="INFO"
+            symbol="ETH", action="portfolio_calculation_completed", level="INFO"
         )
         assert log.symbol == "ETH"
-        assert log.message == "Portfolio calculation completed"
+        assert log.action == "portfolio_calculation_completed"
         assert log.level == "INFO"
-        assert log.generation_date is not None
+        assert log.created_at is not None

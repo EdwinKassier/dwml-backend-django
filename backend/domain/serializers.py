@@ -28,6 +28,10 @@ class CalculationRequestSerializer(serializers.Serializer):
         help_text="Investment amount in USD",
     )
 
+    def validate_symbol(self, value: str) -> str:
+        """Uppercase and validate symbol."""
+        return value.upper().strip()
+
 
 class PortfolioResultSerializer(serializers.ModelSerializer):
     """Response serializer for portfolio results."""
@@ -91,6 +95,10 @@ class PriceRequestSerializer(serializers.Serializer):
     symbol = serializers.CharField(
         max_length=10, min_length=2, help_text="Cryptocurrency symbol"
     )
+
+    def validate_symbol(self, value: str) -> str:
+        """Uppercase and validate symbol."""
+        return value.upper().strip()
 
 
 class PredictionSerializer(serializers.ModelSerializer):
