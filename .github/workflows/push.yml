@@ -115,7 +115,7 @@ jobs:
       - name: Run Unit Tests
         run: |
           cd backend
-          pytest ../tests/unit/ -v --tb=short --cov=api \
+          pytest ../tests/unit/ -v --tb=short --cov=domain \
             --cov-report=term-missing \
             --cov-report=xml \
             --cov-report=html \
@@ -124,7 +124,7 @@ jobs:
       - name: Run Integration Tests
         run: |
           cd backend
-          pytest ../tests/integration/ -v --tb=short --cov=api \
+          pytest ../tests/integration/ -v --tb=short --cov=domain \
             --cov-report=term-missing \
             --cov-report=xml \
             --cov-report=html
