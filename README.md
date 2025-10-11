@@ -2,11 +2,11 @@
 
 <img src="https://www.edwinkassier.com/Assets/Monogram.png" alt="Ashes Project Monogram" width="80" height="80">
 
-# Ashes Project Django REST & GraphQL API Boilerplate
+# Ashes Project Django REST API Boilerplate
 
 <div align="center">
 
-**A production-ready Django API template with REST and GraphQL endpoints**
+**A production-ready Django REST API with simplified domain-driven design**
 
 </div>
 
@@ -55,17 +55,22 @@
 
 ## Overview
 
-A Django REST API boilerplate designed for rapid development of production-ready web APIs.
+A Django REST API designed for rapid development of production-ready web APIs, featuring a **simplified domain-driven design** architecture.
 
 This template provides everything you need to build scalable, maintainable web APIs with Django. It includes features like automated testing, CI/CD pipelines, security scanning, monitoring, and deployment automation.
 
 ### API Architecture
 
-The boilerplate supports both **REST** and **GraphQL** endpoints, giving you flexibility in how you interact with your API:
+The boilerplate uses a **simplified 2-app architecture**:
 
-- **REST API**: Traditional HTTP endpoints with JSON responses
-- **GraphQL**: Flexible query language for efficient data fetching
-- **OpenAPI Documentation**: Interactive API documentation for both interfaces
+- **`domain` app**: All business logic, models, services, and endpoints in one place
+- **`shared` app**: Cross-cutting concerns (exceptions, middleware)
+
+**Key Features:**
+- **REST API**: Clean HTTP endpoints with JSON responses
+- **OpenAPI Documentation**: Interactive API documentation
+- **Main Endpoint**: `process_request` for cryptocurrency portfolio calculations
+- **Django-Idiomatic**: Follows Django best practices, not over-engineered
 
 ### Feature Overview
 
@@ -82,9 +87,9 @@ The boilerplate supports both **REST** and **GraphQL** endpoints, giving you fle
 
 | **Architecture** | **Security** | **Monitoring** | **Performance** |
 |:---|:---|:---|:---|
-| Clean Architecture | Security Scanning | Prometheus Metrics | Redis Caching |
+| Simple Domain Design | Security Scanning | Prometheus Metrics | Django Caching |
 | Service Layer | Dependency Checks | Structured Logging | Database Optimization |
-| Dependency Injection | Authentication | Error Tracking | API Rate Limiting |
+| Single Domain App | Authentication | Error Tracking | API Rate Limiting |
 
 ### Feature Categories
 
@@ -195,6 +200,8 @@ graph TB
 
 ### Get up and running in 5 minutes!
 
+> **🎯 Architecture Note**: This project uses a **simplified 2-app structure** (`domain` + `shared`) instead of over-engineered bounded contexts. All business logic lives in the `domain` app, making it easy to understand and maintain. See [Project Structure](#project-structure) for details.
+
 ### Prerequisites
 
 - **Python 3.10+**
@@ -278,9 +285,28 @@ make migrate
 make runserver
 
 # The API will be available at:
-# http://localhost:8000
-# API Docs: http://localhost:8000/api/docs/
-# Health Check: http://localhost:8000/api/v1/health/
+# 🌐 Main API: http://localhost:8000/api/
+# 📚 API Docs: http://localhost:8000/api/docs/
+# 🏥 Health Check: http://localhost:8000/api/health/
+```
+
+</details>
+
+<details>
+<summary><b>6. Test the Main Endpoint</b></summary>
+
+```bash
+# Test the process_request endpoint (GET method)
+curl "http://localhost:8000/api/process_request/?symbol=BTC&investment=1000"
+
+# Or using POST method
+curl -X POST http://localhost:8000/api/process_request/ \
+  -H "Content-Type: application/json" \
+  -d '{"symbol": "BTC", "investment": 1000}'
+
+# Check health
+curl http://localhost:8000/api/health/
+# Expected: {"status":"healthy","service":"dwml-backend","version":"2.0.0"}
 ```
 
 </details>
@@ -494,70 +520,142 @@ graph TB
 | **Swagger UI** | **OpenAPI Schema** | **Health Check** |
 |:---|:---|:---|
 | *Interactive Docs* | *API Specification* | *System Status* |
-| ```bash<br/>http://localhost:8000/api/docs/<br/>``` | ```bash<br/>http://localhost:8000/api/schema/<br/>``` | ```bash<br/>http://localhost:8000/api/v1/health/<br/>``` |
+| ```bash<br/>http://localhost:8000/api/docs/<br/>``` | ```bash<br/>http://localhost:8000/api/schema/<br/>``` | ```bash<br/>http://localhost:8000/api/health/<br/>``` |
 | ✅ Interactive testing | ✅ Machine-readable | ✅ System health |
 | ✅ Schema validation | ✅ Code generation | ✅ Service status |
 | ✅ Request examples | ✅ Validation | ✅ Monitoring |
 
 ### Main Endpoints
 
-| **Health** | **Documentation** | **Metrics** | **GraphQL** |
+All endpoints are under `/api/`:
+
+| **Category** | **Endpoint** | **Method** | **Description** |
 |:---|:---|:---|:---|
-| ```bash<br/>GET /api/v1/health/<br/>``` | ```bash<br/>GET /api/docs/<br/>``` | ```bash<br/>GET /metrics/<br/>``` | ```bash<br/>POST /graphql/<br/>``` |
+| **Main** | `/api/process_request/` | GET, POST | Calculate portfolio value |
+| **Portfolio** | `/api/results/` | GET | List portfolio results |
+| **Portfolio** | `/api/results/<id>/` | GET | Get specific result |
+| **Portfolio** | `/api/logs/` | GET | View audit logs |
+| **Market Data** | `/api/price/current/` | GET | Get current price |
+| **Market Data** | `/api/price/opening/` | GET | Get opening average |
+| **Market Data** | `/api/price/history/` | GET | Get price history |
+| **Analytics** | `/api/analytics/covid/` | GET | COVID impact analysis |
+| **Analytics** | `/api/analytics/report/` | GET | Generate analytics report |
+| **Health** | `/api/health/` | GET | Health check |
+| **Metrics** | `/metrics/` | GET | Prometheus metrics |
 
-### Interacting with the Live System
+### Using the Main Endpoint
 
-Once deployed, you can interact with the system through multiple interfaces:
+The `process_request` endpoint is the core of the DWML application:
 
-#### REST API
+#### GET Method (Backwards Compatible)
+```bash
+curl "http://localhost:8000/api/process_request/?symbol=BTC&investment=1000"
+```
+
+#### POST Method (RESTful)
+```bash
+curl -X POST http://localhost:8000/api/process_request/ \
+  -H "Content-Type: application/json" \
+  -d '{"symbol": "BTC", "investment": 1000}'
+```
+
+#### Response Format
+```json
+{
+  "id": 1,
+  "symbol": "BTC",
+  "investment": "1000.00",
+  "number_coins": "0.02345678",
+  "profit": "200.50",
+  "growth_factor": "0.2005",
+  "lambos": "0.00",
+  "roi_percentage": "20.05",
+  "is_profitable": true,
+  "can_buy_lambo": false,
+  "risk_level": "LOW",
+  "generation_date": "2025-10-11T12:00:00Z"
+}
+```
+
+### Other Example API Calls
+
 ```bash
 # Health check
-curl https://your-domain.com/api/v1/health/
+curl http://localhost:8000/api/health/
 
-# API documentation
-curl https://your-domain.com/api/docs/
+# Get portfolio results
+curl http://localhost:8000/api/results/
 
-# Example API call
-curl -X GET "https://your-domain.com/api/v1/calculations/?symbol=BTC&investment=1000"
+# Get COVID analytics
+curl http://localhost:8000/api/analytics/covid/
+
+# Get current price
+curl "http://localhost:8000/api/price/current/?symbol=BTC"
 ```
 
-#### GraphQL
-```bash
-# GraphQL endpoint
-curl -X POST https://your-domain.com/graphql/ \
-  -H "Content-Type: application/json" \
-  -d '{"query": "{ __schema { types { name } } }"}'
-```
-
-#### Interactive Documentation
-- **Swagger UI**: `https://your-domain.com/api/docs/` - Interactive REST API testing
-- **GraphQL Playground**: `https://your-domain.com/graphql/` - GraphQL query interface
+### Interactive Documentation
+- **Swagger UI**: `http://localhost:8000/api/docs/` - Interactive REST API testing
+- **OpenAPI Schema**: `http://localhost:8000/api/schema/` - Machine-readable API spec
 
 ---
 
 ## Project Structure
 
-### Organized Codebase
+### Simplified Codebase Architecture
 
 ```
 dwml-backend-django/
-├── backend/                 # Django application
-│   ├── api/                # API app
-│   │   ├── models/         # Data models
-│   │   ├── serializers/    # API serializers
-│   │   ├── services/       # Business logic
-│   │   ├── views/         # API views
-│   │   └── utils/         # Utility functions
-│   ├── config/            # Django settings
-│   └── shared/            # Shared components
-├── tests/                 # Test suites
-├── docs/                  # Documentation
-├── scripts/               # Deployment scripts
-├── .github/workflows/     # CI/CD pipelines
-├── Dockerfile            # Container configuration
-├── compose.yaml          # Docker Compose
-└── Makefile             # Development commands
+├── backend/                     # Django application
+│   ├── domain/                  # 🎯 Main domain app (ALL business logic)
+│   │   ├── models.py            # All 6 models (Portfolio, Market, Analytics)
+│   │   ├── services.py          # All services and business logic
+│   │   ├── views.py             # All 10 API endpoints
+│   │   ├── serializers.py       # All request/response serialization
+│   │   ├── urls.py              # URL routing
+│   │   ├── admin.py             # Django admin configuration
+│   │   └── migrations/          # Database migrations
+│   ├── shared/                  # 🛠️ Shared utilities
+│   │   ├── exceptions/          # Custom domain exceptions
+│   │   │   └── custom_exceptions.py
+│   │   └── middleware.py        # Domain exception middleware
+│   └── config/                  # ⚙️ Django configuration
+│       ├── settings.py          # Application settings
+│       ├── urls.py              # Root URL configuration
+│       └── wsgi.py / asgi.py    # WSGI/ASGI entry points
+├── tests/                       # Test suites
+│   ├── unit/                    # Unit tests
+│   └── integration/             # Integration tests
+├── docs/                        # Documentation
+├── scripts/                     # Deployment scripts
+├── .github/workflows/           # CI/CD pipelines
+├── Dockerfile                   # Container configuration
+├── compose.yaml                 # Docker Compose
+├── Makefile                     # Development commands
+└── IMPLEMENTATION_SUMMARY.md    # Architecture documentation
 ```
+
+### Key Architecture Decisions
+
+**Why Single Domain App?**
+- ✅ **Simplicity**: All business logic in one place
+- ✅ **Django-Idiomatic**: Follows Django conventions
+- ✅ **Maintainability**: Easy to understand and modify
+- ✅ **60% Less Code**: Removed over-engineered bounded contexts
+- ✅ **Production Ready**: Still scalable when needed
+
+**What's in the Domain App?**
+- 📊 **6 Models**: PortfolioResult, PortfolioLog, OpeningAverage, MarketPrice, Prediction, AnalysisReport
+- 🔧 **5 Services**: Portfolio, MarketData, Calculator, Analytics, CovidAnalyzer
+- 🌐 **10 Endpoints**: Including main `process_request` endpoint
+- 🎨 **8 Serializers**: All API request/response handling
+- ⚡ **Kraken Client**: External API integration
+
+**Architecture Evolution:**
+This codebase was refactored from an over-engineered 3-bounded-context DDD implementation to a simpler, more maintainable structure. The result is:
+- **60% less code** (from ~2000 to ~800 LOC)
+- **75% fewer apps** (from 4 domain apps to 1)
+- **Same functionality** with better maintainability
+- See `IMPLEMENTATION_SUMMARY.md` for the full migration story
 
 ---
 

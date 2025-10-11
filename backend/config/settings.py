@@ -70,7 +70,8 @@ INSTALLED_APPS = [
     "corsheaders",
     "drf_spectacular",
     "django_prometheus",
-    "api",
+    # DWML domain - single app with all business logic
+    "domain",
 ]
 
 MIDDLEWARE = [
@@ -84,9 +85,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "api.middleware.RequestLoggingMiddleware",
-    "api.middleware.RateLimitMiddleware",
-    "api.middleware.APIErrorHandlingMiddleware",
+    "shared.middleware.DomainExceptionMiddleware",  # Handle domain exceptions
     "django_prometheus.middleware.PrometheusAfterMiddleware",
 ]
 
@@ -193,15 +192,13 @@ REST_FRAMEWORK = {
         "rest_framework.parsers.JSONParser",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
+        "rest_framework.permissions.AllowAny",  # Allow public access
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
-        "api.authentication.JWTAuthentication",
-        "api.authentication.APIKeyAuthentication",
     ],
-    "DEFAULT_PAGINATION_CLASS": "api.pagination.StandardResultsSetPagination",
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
     "DEFAULT_THROTTLE_CLASSES": [
         "rest_framework.throttling.AnonRateThrottle",
