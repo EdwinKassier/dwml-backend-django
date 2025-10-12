@@ -2,7 +2,7 @@
 
 <img src="https://www.edwinkassier.com/Assets/Monogram.png" alt="Ashes Project Monogram" width="80" height="80">
 
-# Django REST API Boilerplate
+# Ashes Project Django REST API Boilerplate
 
 **A production-ready Django REST API with simplified domain-driven design**
 
