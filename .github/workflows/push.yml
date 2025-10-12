@@ -320,8 +320,8 @@ jobs:
           echo "Testing service at: $SERVICE_URL"
 
           # Test Django health endpoint
-          echo "Testing /api/v1/health/ endpoint..."
-          if curl -f -s "$SERVICE_URL/api/v1/health/" > /dev/null; then
+          echo "Testing /api/health/ endpoint..."
+          if curl -f -s "$SERVICE_URL/api/health/" > /dev/null; then
             echo "✅ Health endpoint is responding"
           else
             echo "❌ Health endpoint failed"
