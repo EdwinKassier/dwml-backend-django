@@ -26,3 +26,10 @@ pandas==2.2.3
 matplotlib==3.10.6
 numpy==1.26.4
 scipy==1.15.3
+
+# Celery & Redis for background tasks
+celery[redis]==5.3.4
+redis==5.0.1
+django-celery-beat==2.5.0
+django-celery-results==2.5.0
+flower==2.0.1

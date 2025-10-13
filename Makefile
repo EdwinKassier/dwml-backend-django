@@ -1,4 +1,6 @@
 .PHONY: install install-dev test test-unit test-integration lint format clean pre-deploy security-check coverage help migrate runserver
+.PHONY: docker-up docker-down docker-logs docker-ps docker-rebuild docker-shell
+.PHONY: celery-worker celery-beat celery-flower celery-purge redis-cli redis-flush
 
 # Variables
 PYTHON := python3
@@ -14,19 +16,43 @@ COVERAGE := $(PYTHON) -m coverage
 # Default target
 help:
 	@echo "Available commands:"
+	@echo ""
+	@echo "Development:"
 	@echo "  make install          - Install production dependencies"
 	@echo "  make install-dev      - Install dev dependencies and pre-commit"
-	@echo "  make test             - Run all tests with coverage"
-	@echo "  make test-unit        - Run unit tests only"
-	@echo "  make test-integration - Run integration tests only"
-	@echo "  make lint             - Run linting checks"
-	@echo "  make format           - Format code with black and isort"
-	@echo "  make security-check   - Run security scans (bandit + safety)"
-	@echo "  make coverage         - Generate coverage report"
-	@echo "  make pre-deploy       - Run all pre-deployment checks"
 	@echo "  make migrate          - Run Django migrations"
 	@echo "  make runserver        - Run Django development server"
 	@echo "  make clean            - Clean temporary files and caches"
+	@echo ""
+	@echo "Testing:"
+	@echo "  make test             - Run all tests with coverage"
+	@echo "  make test-unit        - Run unit tests only"
+	@echo "  make test-integration - Run integration tests only"
+	@echo "  make coverage         - Generate coverage report"
+	@echo ""
+	@echo "Code Quality:"
+	@echo "  make lint             - Run linting checks"
+	@echo "  make format           - Format code with black and isort"
+	@echo "  make security-check   - Run security scans (bandit + safety)"
+	@echo "  make pre-deploy       - Run all pre-deployment checks"
+	@echo ""
+	@echo "Docker:"
+	@echo "  make docker-up        - Start all Docker services"
+	@echo "  make docker-down      - Stop all Docker services"
+	@echo "  make docker-logs      - View Docker logs (follow mode)"
+	@echo "  make docker-ps        - Show Docker service status"
+	@echo "  make docker-rebuild   - Rebuild and restart all services"
+	@echo "  make docker-shell     - Open shell in web container"
+	@echo ""
+	@echo "Celery:"
+	@echo "  make celery-worker    - Start Celery worker (local)"
+	@echo "  make celery-beat      - Start Celery beat scheduler (local)"
+	@echo "  make celery-flower    - Start Flower monitoring UI (local)"
+	@echo "  make celery-purge     - Purge all Celery tasks"
+	@echo ""
+	@echo "Redis:"
+	@echo "  make redis-cli        - Open Redis CLI"
+	@echo "  make redis-flush      - Flush all Redis data"
 
 # Install production dependencies
 install:
@@ -112,3 +138,54 @@ clean:
 	find . -type f -name 'coverage.xml' -delete 2>/dev/null || true
 	find . -type f -name '*-report.json' -delete 2>/dev/null || true
 	@echo "✅ Cleaned temporary files!"
+
+# Docker Commands
+docker-up:
+	docker-compose up -d
+	@echo "✅ Docker services started!"
+	@echo "   Web: http://localhost:8080"
+	@echo "   Flower: http://localhost:5555"
+
+docker-down:
+	docker-compose down
+	@echo "✅ Docker services stopped!"
+
+docker-logs:
+	docker-compose logs -f
+
+docker-ps:
+	docker-compose ps
+
+docker-rebuild:
+	docker-compose down
+	docker-compose build --no-cache
+	docker-compose up -d
+	@echo "✅ Docker services rebuilt and restarted!"
+
+docker-shell:
+	docker-compose exec web /bin/bash
+
+# Celery Commands (for local development without Docker)
+celery-worker:
+	cd backend && celery -A config worker --loglevel=info --concurrency=2
+	@echo "✅ Celery worker started!"
+
+celery-beat:
+	cd backend && celery -A config beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+	@echo "✅ Celery beat started!"
+
+celery-flower:
+	cd backend && celery -A config flower --port=5555
+	@echo "✅ Flower monitoring UI started at http://localhost:5555"
+
+celery-purge:
+	cd backend && celery -A config purge -f
+	@echo "✅ All Celery tasks purged!"
+
+# Redis Commands
+redis-cli:
+	docker-compose exec redis redis-cli
+
+redis-flush:
+	docker-compose exec redis redis-cli FLUSHALL
+	@echo "⚠️  All Redis data flushed!"

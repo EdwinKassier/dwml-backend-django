@@ -70,6 +70,9 @@ INSTALLED_APPS = [
     "corsheaders",
     "drf_spectacular",
     "django_prometheus",
+    # Celery & background tasks
+    "django_celery_beat",
+    "django_celery_results",
     # DWML domain - single app with all business logic
     "domain",
 ]
@@ -227,6 +230,25 @@ CACHES = {
         "TIMEOUT": 300,
     }
 }
+
+# Celery Configuration
+CELERY_BROKER_URL = env("REDIS_URL", default="redis://redis:6379/0")
+CELERY_RESULT_BACKEND = env("REDIS_URL", default="redis://redis:6379/0")
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60  # 30 minutes
+CELERY_TASK_SOFT_TIME_LIMIT = 25 * 60  # 25 minutes (soft limit before hard limit)
+CELERY_RESULT_EXPIRES = 3600  # 1 hour
+CELERY_WORKER_PREFETCH_MULTIPLIER = 4  # How many tasks a worker prefetches
+CELERY_WORKER_MAX_TASKS_PER_CHILD = (
+    1000  # Restart worker after N tasks (prevent memory leaks)
+)
+
+# Celery Beat (scheduled tasks)
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
 # Session configuration - Use database sessions
 SESSION_ENGINE = "django.contrib.sessions.backends.db"

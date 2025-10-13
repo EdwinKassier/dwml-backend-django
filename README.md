@@ -28,11 +28,12 @@ A Django REST API boilerplate designed for rapid development of production-ready
 - ✅ **Code Quality Tools**: Black, Flake8, isort, Mypy, pre-commit hooks
 - ✅ **Testing Framework**: Pytest with 80%+ coverage target
 - ✅ **Security Scanning**: Bandit and Safety integration
-- ✅ **Docker Ready**: Multi-stage builds and compose configuration
+- ✅ **Background Tasks**: Celery with Redis for async processing and scheduled jobs
+- ✅ **Docker Ready**: Multi-stage builds and compose configuration with Redis, Celery, Beat, Flower
 - ✅ **API Documentation**: Auto-generated OpenAPI/Swagger docs
 - ✅ **Example Implementation**: Cryptocurrency portfolio app demonstrating the architecture
 
-### 🎯 Important Note
+### Important Note
 
 **This boilerplate includes a complete example application** (cryptocurrency portfolio calculator) to demonstrate the architecture in action. **You should replace this example with your own domain logic** - see [Customizing This Boilerplate](#customizing-this-boilerplate).
 
@@ -86,7 +87,7 @@ curl "http://localhost:8000/api/process_request/?symbol=BTC&investment=1000"
 
 ---
 
-## 🎨 Customizing This Boilerplate
+## Customizing This Boilerplate
 
 The included cryptocurrency portfolio app is just an example. Here's how to replace it with your own domain logic:
 
@@ -130,7 +131,24 @@ python manage.py migrate
 # With your own business logic services
 ```
 
-### Step 3: Create Your API Endpoints
+### Step 3: Update Background Tasks
+
+```bash
+# Open backend/domain/tasks.py
+# Replace example tasks with your own:
+# - process_portfolio_async → your_async_task
+# - fetch_market_prices_task → your_scheduled_task
+# - cleanup_old_data_task → your_maintenance_task
+
+# Remember: Tasks should wrap services, not duplicate business logic
+# Example pattern:
+#   @shared_task(name='domain.my_task')
+#   def my_task(params):
+#       service = MyService()
+#       return service.do_something(params)
+```
+
+### Step 4: Create Your API Endpoints
 
 ```bash
 # Open backend/domain/views.py
@@ -146,7 +164,7 @@ python manage.py migrate
 # - health_check (useful for load balancers)
 ```
 
-### Step 4: Update Serializers
+### Step 5: Update Serializers
 
 ```bash
 # Open backend/domain/serializers.py
@@ -157,14 +175,14 @@ python manage.py migrate
 # - etc.
 ```
 
-### Step 5: Update URL Routing
+### Step 6: Update URL Routing
 
 ```bash
 # Open backend/domain/urls.py
 # Update URL patterns to match your new endpoints
 ```
 
-### Step 6: Rename Project References
+### Step 7: Rename Project References
 
 ```bash
 # Search and replace throughout the project:
@@ -173,7 +191,7 @@ python manage.py migrate
 # - Update any project-specific references
 ```
 
-### Step 7: Update Tests
+### Step 8: Update Tests
 
 ```bash
 # Delete example tests:
@@ -185,7 +203,7 @@ python manage.py migrate
 # Keep the test structure and pytest configuration
 ```
 
-### Step 8: Update Documentation
+### Step 9: Update Documentation
 
 ```bash
 # Update this README.md with your project details
@@ -202,25 +220,27 @@ python manage.py migrate
 ```
 dwml-backend-django/
 ├── backend/
-│   ├── domain/                 # 🎯 YOUR BUSINESS LOGIC GOES HERE
+│   ├── domain/                 # YOUR BUSINESS LOGIC GOES HERE
 │   │   ├── models.py           # Database models
-│   │   ├── services.py         # Business logic layer
+│   │   ├── services.py         # Business logic layer (sync)
+│   │   ├── tasks.py            # Background tasks (async)
 │   │   ├── views.py            # API endpoints
 │   │   ├── serializers.py      # Request/response serialization
 │   │   ├── urls.py             # URL routing
 │   │   └── migrations/         # Database migrations
-│   ├── shared/                 # 🛠️ Shared utilities (keep these)
+│   ├── shared/                 # Shared utilities (keep these)
 │   │   ├── exceptions/         # Custom exceptions
 │   │   └── middleware.py       # Exception handling middleware
-│   └── config/                 # ⚙️ Django configuration
+│   └── config/                 # Django configuration
 │       ├── settings.py         # Django settings
+│       ├── celery.py           # Celery configuration
 │       ├── urls.py             # Root URL configuration
 │       └── wsgi.py / asgi.py   # Server entry points
 ├── tests/
 │   ├── unit/                   # Unit tests
 │   └── integration/            # Integration tests
 ├── Dockerfile                  # Container configuration
-├── compose.yaml                # Docker Compose setup
+├── compose.yaml                # Docker Compose (Django, Redis, Celery, Beat, Flower)
 ├── Makefile                    # Development commands
 └── requirements.txt            # Python dependencies
 ```
@@ -236,9 +256,14 @@ dwml-backend-django/
 
 **What Goes Where?**
 
-- **`domain/` app**: All your business-specific code (models, services, views, serializers)
+- **`domain/` app**: All your business-specific code
+  - `models.py` - Domain entities with behavior
+  - `services.py` - Business logic (synchronous)
+  - `tasks.py` - Background tasks (asynchronous wrappers around services)
+  - `views.py` - API endpoints
+  - `serializers.py` - Request/response handling
 - **`shared/` app**: Cross-cutting concerns used across domains (exceptions, middleware, utilities)
-- **`config/` folder**: Django configuration and project settings
+- **`config/` folder**: Infrastructure configuration (Django settings, Celery config, server entry points)
 
 ---
 
@@ -309,6 +334,100 @@ make security-check
 This runs:
 - **Bandit**: Security vulnerability scanning
 - **Safety**: Dependency vulnerability checking
+
+### Background Tasks (Celery)
+
+This boilerplate includes **Celery** for background task processing with Redis as the message broker.
+
+**Use Cases:**
+- Asynchronous API operations (long-running calculations)
+- Scheduled tasks (data cleanup, report generation)
+- Periodic data fetching (market prices, external APIs)
+- Batch processing operations
+
+**Quick Start with Docker:**
+```bash
+# Start all services (Django, Redis, Celery, Beat, Flower)
+make docker-up
+
+# View Celery worker logs
+docker-compose logs -f celery
+
+# Access Flower monitoring UI
+open http://localhost:5555
+```
+
+**Create a Background Task:**
+
+Tasks are placed in `backend/domain/tasks.py` and should wrap domain services:
+
+```python
+from celery import shared_task
+from .services import PortfolioService
+
+@shared_task(name='domain.my_task')
+def my_task(symbol: str, investment: float):
+    """Background task wrapping domain service."""
+    service = PortfolioService()
+    result = service.process_request(symbol, investment)
+    return result.id
+```
+
+**Call Task from View:**
+
+```python
+from .tasks import my_task
+
+@api_view(['POST'])
+def my_view(request):
+    # Execute asynchronously
+    task = my_task.delay(
+        symbol=request.data['symbol'],
+        investment=request.data['investment']
+    )
+    return Response({'task_id': task.task_id})
+```
+
+**Schedule Periodic Tasks:**
+
+1. Run migrations: `docker-compose exec web python manage.py migrate`
+2. Access admin: http://localhost:8080/admin/
+3. Go to **Periodic Tasks** → **Add**
+4. Configure task name, schedule, and enable
+
+**Available Services:**
+- **Redis** (port 6379): Message broker and result backend
+- **Celery Worker**: Processes background tasks
+- **Celery Beat**: Schedules periodic tasks
+- **Flower** (port 5555): Web-based monitoring and management
+
+**Local Development (without Docker):**
+
+```bash
+# Terminal 1: Start Redis
+brew install redis && brew services start redis
+
+# Terminal 2: Start Django
+make runserver
+
+# Terminal 3: Start Celery worker
+make celery-worker
+
+# Terminal 4: Start Celery beat (optional)
+make celery-beat
+
+# Terminal 5: Start Flower (optional)
+make celery-flower
+```
+
+**Useful Commands:**
+- `make celery-worker` - Start worker locally
+- `make celery-beat` - Start scheduler locally
+- `make celery-flower` - Start monitoring UI locally
+- `make celery-purge` - Clear all pending tasks
+- `make redis-cli` - Access Redis CLI
+
+See `CELERY_QUICKSTART.md` for detailed documentation.
 
 ---
 
